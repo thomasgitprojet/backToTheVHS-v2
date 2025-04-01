@@ -18,6 +18,7 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - .:/app:delegated
     ports:
       # HTTP
       - target: 80
@@ -57,7 +58,9 @@ services:
       PMA_HOST: database
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "8080:80"
+    - "8080:80"
+    depends_on:
+    - database
 
 volumes:
   caddy_data:
