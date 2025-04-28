@@ -1,0 +1,30 @@
+{
+  "name": "backtothevhs-v2",
+  "version": "1.0.0",
+  "description": "A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework, with [FrankenPHP](https://frankenphp.dev) and [Caddy](https://caddyserver.com/) inside!",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx tailwindcss -i ./assets/styles/app.css -o ./public/build/tailwind.css --watch",
+    "build": "npx tailwindcss -i ./assets/styles/app.css -o ./public/build/tailwind.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomasgitprojet/backToTheVHS-v2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thomasgitprojet/backToTheVHS-v2/issues"
+  },
+  "homepage": "https://github.com/thomasgitprojet/backToTheVHS-v2#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.1"
+  }
+}

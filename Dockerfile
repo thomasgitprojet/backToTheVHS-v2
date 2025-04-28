@@ -10,6 +10,7 @@ FROM dunglas/frankenphp:1-php8.3 AS frankenphp_upstream
 
 # Base FrankenPHP image
 FROM frankenphp_upstream AS frankenphp_base
+RUN docker-php-ext-install pdo_mysql
 
 WORKDIR /app
 
@@ -42,6 +43,9 @@ ENV MERCURE_TRANSPORT_URL=bolt:///data/mercure.db
 ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
 
 ###> recipes ###
+###> doctrine/doctrine-bundle ###
+RUN install-php-extensions pdo_pgsql
+###< doctrine/doctrine-bundle ###
 ###< recipes ###
 
 COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
@@ -68,6 +72,11 @@ RUN set -eux; \
 	install-php-extensions \
 		xdebug \
 	;
+
+# --- AJOUT POUR NODE.JS ---
+	RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+# --------------------------
 
 COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
 
