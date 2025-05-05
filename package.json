@@ -7,9 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tailwindcss -i ./assets/styles/app.css -o ./public/build/tailwind.css --watch",
-    "build": "npx tailwindcss -i ./assets/styles/app.css -o ./public/build/tailwind.css --minify"
+    "dev": "npx encore dev",
+    "watch": "npx encore dev --watch",
+    "build": "npx encore production"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,14 @@
   "homepage": "https://github.com/thomasgitprojet/backToTheVHS-v2#readme",
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "file-loader": "^6.0.0",
     "postcss": "^8.4.32",
-    "tailwindcss": "^3.4.1"
+    "postcss-loader": "^8.1.1",
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "@symfony/webpack-encore": "^5.1.0",
+    "webpack": "^5.99.7",
+    "webpack-cli": "^5.1.4"
   }
 }
