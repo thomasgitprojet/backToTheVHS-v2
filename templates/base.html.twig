@@ -12,11 +12,23 @@
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
-        <!-- <h1 class="text-4xl font-extrabold tracking-wider uppercase">
-            Back To The VHS11
-        </h1> -->
-        <img src="{{ encore_entry_asset('app', 'images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto">
-        <p class="text-sm text-gray-400 mt-2">La vintage n’a jamais été aussi stylé</p>
+         <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto">
+        <p class="text-sm text-yellow-400 mt-2">La vintage n’a jamais été aussi stylé</p>
+        <div>
+            <ul class="flex justify-end gap-4">
+                <li>
+                    <p>connection</p>
+                </li>
+                <li class="flex">
+                    <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
+                    <p>mon compte</p>
+                </li>
+                <li class="flex">
+                    <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
+                    <p>mon panier</p>
+                </li>
+            </ul>
+        </div>
     </header>
 
     <!-- Navigation -->
@@ -29,7 +41,7 @@
     </nav>
 
     <!-- Contenu principal -->
-    <main class="flex-1 px-6 py-10">
+    <main class="bg-contain bg-repeat-round h-screen" style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
         {% block content %}{% endblock %}
     </main>
 
