@@ -13,17 +13,17 @@
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
          <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto">
-        <p class="text-sm text-yellow-400 mt-2">La vintage n’a jamais été aussi stylé</p>
+        <p class="text-sm text-yellow-400 mt-2 mb-4">La vintage n’a jamais été aussi stylé</p>
         <div>
-            <ul class="flex justify-end gap-4">
-                <li>
+            <ul class="flex justify-center gap-4">
+                <li class="flex items-end">
                     <p>connection</p>
                 </li>
-                <li class="flex">
+                <li class="flex items-end gap-2">
                     <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
                     <p>mon compte</p>
                 </li>
-                <li class="flex">
+                <li class="flex flex items-end gap-2">
                     <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
                     <p>mon panier</p>
                 </li>
@@ -31,8 +31,27 @@
         </div>
     </header>
 
-    <!-- Navigation -->
-    <nav class="bg-gray-800 text-white py-3 px-6 shadow-md">
+    <!-- Navigation mobile -->
+    <nav class="bg-gray-800 text-white py-3 px-6 shadow-md md:hidden">
+        <button id="burger-btn" class="flex justify-center md:hidden text-white text-3xl" aria-label="Ouvrir le menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <button id="close-btn" class="flex justify-center hidden md:hidden text-white text-3xl" aria-label="Fermer le menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>              
+        </button>
+        <ul id="mobile-menu" class="hidden text-lg font-medium flex flex-col gap-6 pl-12">
+            <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
+            <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
+            <li><a href="#" class="hover:text-yellow-400 transition">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Navigation descktop -->
+    <nav class="bg-gray-800 text-white py-3 px-6 shadow-md hidden md:block">
         <ul class="flex justify-center gap-6 text-lg font-medium">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
             <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
