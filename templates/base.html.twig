@@ -12,20 +12,26 @@
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
-         <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto">
-        <p class="text-sm text-yellow-400 mt-2 mb-4">La vintage n’a jamais été aussi stylé</p>
+        <div class="text-center md:flex flex-col md:items-start md:pt-12">
+            <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto md:w-96 md:mx-0">
+            <p class="text-sm text-yellow-400 mt-2 mb-4 md:text-lg md:pl-12">La vintage n’a jamais été aussi stylé</p>
+        </div>
         <div>
-            <ul class="flex justify-center gap-4">
+            <ul class="flex justify-center gap-4 md:justify-end">
                 <li class="flex items-end">
-                    <p>connection</p>
+                    <a href="">connection</a>
                 </li>
-                <li class="flex items-end gap-2">
-                    <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
-                    <p>mon compte</p>
+                <li>
+                    <a class="flex items-end gap-2" href="">
+                        <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
+                        mon compte
+                    </a>
                 </li>
-                <li class="flex flex items-end gap-2">
-                    <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
-                    <p>mon panier</p>
+                <li>
+                    <a class="flex flex items-end gap-2" href="">
+                        <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
+                        mon panier
+                    </a>
                 </li>
             </ul>
         </div>
@@ -60,7 +66,7 @@
     </nav>
 
     <!-- Contenu principal -->
-    <main class="bg-contain bg-repeat-round h-screen" style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+    <main class="bg-contain bg-repeat-round" style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
         {% block content %}{% endblock %}
     </main>
 
