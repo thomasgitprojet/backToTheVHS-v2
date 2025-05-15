@@ -4,12 +4,14 @@
 {% block title %}Accueil | Back to the VHS{% endblock %}
 
 {% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+        style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
     <div class="text-center">
         <h2 class="text-4xl font-bold mb-4">Bienvenue sur Back to the VHS</h2>
         <p class="text-lg">Un site de vente fictif de cassettes VHS vintage pour les vrais amateurs !</p>
     </div>
-    <section class="flex flex-col p-4 m-2 bg-white/25 rounded-lg">
-        <h3 class="text-2xl text-center font-bold mb-4">Nos derniers produits ajoutés</h3>
+    <section class="flex flex-col p-4 m-2 bg-white/25 rounded-lg max-w-7xl">
+        <h3 class="text-2xl text-center font-bold mb-4 md:text-4xl md:pb-4">Nos derniers produits ajoutés</h3>
         <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <card class="border-2 border-white p-4">
                 <img src="{{ asset('build/images/bToVHS.png') }}" alt="image produit">
@@ -56,4 +58,5 @@
            
         </div>
     </section>
+</div>
 {% endblock %}

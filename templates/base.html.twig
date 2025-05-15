@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Back To The VHS{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+    {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
+
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
         <div class="text-center md:flex flex-col md:items-start md:pt-12">
-            <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS" class="w-64 mx-auto md:w-96 md:mx-0">
+            <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS"
+                class="w-64 mx-auto md:w-96 md:mx-0">
             <p class="text-sm text-yellow-400 mt-2 mb-4 md:text-lg md:pl-12">La vintage n’a jamais été aussi stylé</p>
         </div>
         <div>
             <ul class="flex justify-center gap-4 md:justify-end">
                 <li class="flex items-end">
-                    <a href="">connection</a>
+                    <a href="{{ path('app_connection') }}" class="hover:text-yellow-400 transition">Connexion</a>
                 </li>
                 <li>
                     <a class="flex items-end gap-2" href="">
@@ -38,18 +41,21 @@
     </header>
 
     <!-- Navigation mobile -->
-    <nav class="bg-gray-800 text-white py-3 px-6 shadow-md md:hidden">
-        <button id="burger-btn" class="flex justify-center md:hidden text-white text-3xl" aria-label="Ouvrir le menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <nav class="bg-gray-800 text-white py-3 shadow-md md:hidden">
+        <button id="burger-btn" class="flex justify-center ml-6 md:hidden text-white text-3xl" aria-label="Ouvrir le menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
         </button>
-        <button id="close-btn" class="flex justify-center hidden md:hidden text-white text-3xl" aria-label="Fermer le menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <button id="close-btn" class="flex justify-center ml-6 hidden md:hidden text-white text-3xl"
+            aria-label="Fermer le menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>              
+            </svg>
         </button>
-        <ul id="mobile-menu" class="hidden text-lg font-medium flex flex-col gap-6 pl-12">
+        <ul id="mobile-menu" class="hidden bg-gray-800 w-full text-lg font-medium flex flex-col gap-6 pl-12 absolute">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
             <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
             <li><a href="#" class="hover:text-yellow-400 transition">Contact</a></li>
@@ -58,7 +64,7 @@
 
     <!-- Navigation descktop -->
     <nav class="bg-gray-800 text-white py-3 px-6 shadow-md hidden md:block">
-        <ul class="flex justify-center gap-6 text-lg font-medium">
+        <ul class="flex justify-center gap-6 text-lg font-medium md:text-2xl">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
             <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
             <li><a href="#" class="hover:text-yellow-400 transition">Contact</a></li>
@@ -66,7 +72,7 @@
     </nav>
 
     <!-- Contenu principal -->
-    <main class="bg-contain bg-repeat-round" style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+    <main>
         {% block content %}{% endblock %}
     </main>
 
@@ -75,7 +81,8 @@
         &copy; {{ "now"|date("Y") }} Back To The VHS - Tous droits réservés
     </footer>
     {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </body>
+
 </html>
