@@ -25,13 +25,13 @@
                     <a href="{{ path('app_connection') }}" class="hover:text-yellow-400 transition">Connexion</a>
                 </li>
                 <li>
-                    <a class="flex items-end gap-2" href="">
+                    <a class="flex items-end gap-2" href="{{ path('app_account') }}">
                         <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
                         mon compte
                     </a>
                 </li>
                 <li>
-                    <a class="flex flex items-end gap-2" href="">
+                    <a class="flex flex items-end gap-2" href="{{ path('app_my_cart') }}">
                         <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
                         mon panier
                     </a>
@@ -57,8 +57,8 @@
         </button>
         <ul id="mobile-menu" class="hidden bg-gray-800 w-full text-lg font-medium flex flex-col gap-6 pl-12 absolute">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
-            <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
-            <li><a href="#" class="hover:text-yellow-400 transition">Contact</a></li>
+            <li><a href="{{ path('app_products') }}" class="hover:text-yellow-400 transition">Catalogue</a></li>
+            <li><a href="{{ path('app_contact') }}" class="hover:text-yellow-400 transition">Contact</a></li>
         </ul>
     </nav>
 
@@ -66,8 +66,8 @@
     <nav class="bg-gray-800 text-white py-3 px-6 shadow-md hidden md:block">
         <ul class="flex justify-center gap-6 text-lg font-medium md:text-2xl">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
-            <li><a href="#" class="hover:text-yellow-400 transition">Catalogue</a></li>
-            <li><a href="#" class="hover:text-yellow-400 transition">Contact</a></li>
+            <li><a href="{{ path('app_products') }}" class="hover:text-yellow-400 transition">Catalogue</a></li>
+            <li><a href="{{ path('app_contact') }}" class="hover:text-yellow-400 transition">Contact</a></li>
         </ul>
     </nav>
 

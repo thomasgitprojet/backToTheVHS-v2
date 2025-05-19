@@ -1,0 +1,56 @@
+{# templates/my_cart/my_cart.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MyCartController!{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+
+    <div class="w-full max-w-4xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
+        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">Mon Panier</h2>
+
+        <div class="space-y-6">
+            <!-- Produit dans le panier -->
+            <div class="flex flex-col md:flex-row items-center bg-gray-700 p-4 rounded-lg shadow-sm">
+                <img src="{{ asset('build/images/bToVHS.png') }}" alt="Nom du produit"
+                    class="w-24 h-24 object-contain rounded-md mb-4 md:mb-0 md:mr-6">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-white">Nom du produit</h3>
+                    <p class="text-sm text-gray-300">Quantité : 1</p>
+                    <p class="text-sm text-gray-300">Prix unitaire : 9,99 €</p>
+                    <p class="text-sm text-gray-300">Total : 9,99 €</p>
+                </div>
+                <button class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm">
+                    Retirer
+                </button>
+            </div>
+
+            <!-- Copie du bloc ci-dessus pour d'autres produits -->
+            <div class="flex flex-col md:flex-row items-center bg-gray-700 p-4 rounded-lg shadow-sm">
+                <img src="{{ asset('build/images/another-product.png') }}" alt="Autre produit"
+                    class="w-24 h-24 object-contain rounded-md mb-4 md:mb-0 md:mr-6">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-white">Autre produit</h3>
+                    <p class="text-sm text-gray-300">Quantité : 2</p>
+                    <p class="text-sm text-gray-300">Prix unitaire : 14,50 €</p>
+                    <p class="text-sm text-gray-300">Total : 29,00 €</p>
+                </div>
+                <button class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm">
+                    Retirer
+                </button>
+            </div>
+        </div>
+
+        <!-- Total et bouton commande -->
+        <div class="mt-8 border-t border-gray-600 pt-6 text-right">
+            <p class="text-lg font-semibold text-white mb-4">Total du panier : <span class="text-yellow-400">38,99
+                    €</span></p>
+            <button
+                class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-6 rounded-md transition duration-200">
+                Valider la commande
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

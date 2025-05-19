@@ -1,0 +1,56 @@
+{# templates/products/products.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductsController!{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+    <div class="max-w-7xl mx-auto p-6">
+        <h2 class="text-3xl font-bold text-yellow-400 text-center mb-10">Catalogue</h2>
+
+        <!-- Filtres -->
+        <div class="mb-8 bg-gray-800/50 p-4 rounded-lg shadow-md grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <input type="text" placeholder="Rechercher par titre..."
+                class="w-full px-4 py-2 rounded-md bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+            <select
+                class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <option>Trier par</option>
+                <option>Prix croissant</option>
+                <option>Prix décroissant</option>
+                <option>Titre A-Z</option>
+                <option>Titre Z-A</option>
+            </select>
+        </div>
+
+        <!-- Grille des produits -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+            {% for i in 1..22 %}
+                <!-- Produit -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col">
+                    <img src="{{ asset('build/images/bToVHS.png') }}" alt="Produit 1" class="rounded-md mb-4 h-48 object-contain">
+                    <h3 class="text-xl font-semibold text-white mb-2">Nom du produit</h3>
+                    <p class="text-sm text-gray-300 mb-4">Petite description du produit très stylé.</p>
+                    <p class="text-yellow-400 font-bold text-lg mb-4">9,99 €</p>
+                    <a href="{{ path('app_product') }}" class="mt-auto bg-yellow-400 text-black text-center py-2 px-4 rounded-md hover:bg-yellow-500 transition">
+                        Voir le produit
+                    </a>
+                    </div>
+                {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-10 flex justify-center items-center gap-4">
+            <button class="px-4 py-2 rounded-md bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-50" disabled>
+                ← Précédent
+            </button>
+            <span class="text-white font-semibold">Page 1 sur 3</span>
+            <button class="px-4 py-2 rounded-md bg-yellow-400 text-black hover:bg-yellow-500">
+                Suivant →
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

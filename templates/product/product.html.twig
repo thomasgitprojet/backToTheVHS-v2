@@ -1,0 +1,39 @@
+{# templates/product/product.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductController!{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+        style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+        <div class="max-w-7xl mx-auto p-6 bg-gray-800/50 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold text-yellow-400 text-center mb-10">Détail du produit</h2>
+
+    <div class="flex flex-col md:flex-row gap-8">
+        <div class="md:w-1/2 flex justify-center">
+            <img src="{{ asset('build/images/bToVHS.png') }}" alt="Nom du produit" 
+                 class="rounded-md max-h-96 object-contain" />
+        </div>
+
+        <div class="md:w-1/2 flex flex-col text-white">
+            <h3 class="text-2xl font-bold mb-4">Nom du produit vintage</h3>
+            <p class="text-gray-300 mb-6">
+                Voici une description détaillée du produit VHS vintage.  
+                Parle ici de son état, de l’édition, de l’année, et pourquoi il est si stylé.
+            </p>
+
+            <p class="mb-4">
+                <span class="font-semibold">Catégorie :</span> Film d’aventure
+            </p>
+
+            <p class="text-yellow-400 font-bold text-2xl mb-8">9,99 €</p>
+
+            <button type="button" 
+                class="self-start bg-yellow-400 text-black font-bold py-3 px-8 rounded-md hover:bg-yellow-500 transition">
+                Ajouter au panier
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

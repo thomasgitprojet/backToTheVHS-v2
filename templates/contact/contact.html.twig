@@ -1,0 +1,49 @@
+{# templates/contact/contact.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ContactController!{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-6 text-gray-800">Contactez-nous</h1>
+
+        <p class="mb-4 text-gray-600">
+            Vous avez une question, une suggestion, ou besoin d’aide ?
+            Remplissez le formulaire ci-dessous, nous vous répondrons rapidement !
+        </p>
+
+        <form action="#" method="POST" class="space-y-6">
+            <div>
+                <label for="name" class="block text-gray-700 font-semibold mb-2">Nom complet</label>
+                <input type="text" id="name" name="name" required
+                    class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div>
+                <label for="email" class="block text-gray-700 font-semibold mb-2">Adresse email</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div>
+                <label for="subject" class="block text-gray-700 font-semibold mb-2">Sujet</label>
+                <input type="text" id="subject" name="subject" required
+                    class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <div>
+                <label for="message" class="block text-gray-700 font-semibold mb-2">Message</label>
+                <textarea id="message" name="message" rows="5" required
+                    class="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            </div>
+
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md transition-colors duration-300">
+                Envoyer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

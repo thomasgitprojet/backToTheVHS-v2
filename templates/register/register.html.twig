@@ -1,0 +1,66 @@
+{# templates/register/register.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello RegisterController!{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+
+    <div class="w-full max-w-xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
+        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">Créer un compte</h2>
+
+        <form>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="lastname" class="block text-sm font-medium text-white mb-1">Nom</label>
+                    <input type="text" id="lastname" name="lastname" placeholder="Votre nom"
+                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+                <div>
+                    <label for="firstname" class="block text-sm font-medium text-white mb-1">Prénom</label>
+                    <input type="text" id="firstname" name="firstname" placeholder="Votre prénom"
+                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="pseudo" class="block text-sm font-medium text-white mb-1">Pseudo</label>
+                <input type="text" id="pseudo" name="pseudo" placeholder="Votre pseudo"
+                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+
+            <div class="mb-4">
+                <label for="age" class="block text-sm font-medium text-white mb-1">Âge</label>
+                <input type="number" id="age" name="age" placeholder="Votre âge"
+                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-white mb-1">Adresse email</label>
+                <input type="email" id="email" name="email" placeholder="Votre email"
+                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-white mb-1">Mot de passe</label>
+                <input type="password" id="password" name="password" placeholder="Votre mot de passe"
+                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+
+            <div class="mb-6">
+                <label for="confirm_password" class="block text-sm font-medium text-white mb-1">Confirmer le mot de
+                    passe</label>
+                <input type="password" id="confirm_password" name="confirm_password"
+                    placeholder="Confirmez votre mot de passe"
+                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
+                Créer mon compte
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

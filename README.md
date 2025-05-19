@@ -118,3 +118,7 @@ fontSize: {
       '6xl': '4rem',
       '7xl': '5rem',
     }
+
+<!-- Pour rendre ce formulaire dynamique plus tard, tu utiliseras Symfony Forms.
+
+Pour la validation visuelle : ajoute des classes conditionnelles ou des petits messages d’erreur dans les prochaines versions. -->
