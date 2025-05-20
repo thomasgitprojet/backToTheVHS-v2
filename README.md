@@ -59,7 +59,12 @@ php bin/console make:controller NomDuController:
 
 
 ##  Créer une entité (table en base de données) :
-php bin/console make:entity NomDeLEntite
+docker-compose exec php bin/console make:entity Account
+docker-compose exec php bin/console make:entity Status
+docker-compose exec php bin/console make:entity Movies
+docker-compose exec php bin/console make:entity Commande
+docker-compose exec php bin/console make:entity Product
+docker-compose exec php bin/console make:entity Publication
 
 
 ##  Créer une migration pour la base de données :
