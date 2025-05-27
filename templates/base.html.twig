@@ -12,6 +12,12 @@
 
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
+{% for message in app.flashes('success') %}
+    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center shadow">
+        {{ message }}
+    </div>
+{% endfor %}
+
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
         <div class="text-center md:flex flex-col md:items-start md:pt-12">

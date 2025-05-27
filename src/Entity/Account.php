@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
-class Account
+class Account implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,6 +48,9 @@ class Account
      */
     #[ORM\OneToMany(targetEntity: Publication::class, mappedBy: 'account', orphanRemoval: true)]
     private Collection $publications;
+
+    private ?string $plainPassword = null;
+
 
     public function __construct()
     {
@@ -110,6 +116,11 @@ class Account
         return $this->email;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
@@ -128,6 +139,29 @@ class Account
 
         return $this;
     }
+
+    public function getRoles(): array
+    {
+        // Par défaut on peut retourner un rôle simple
+        return ['ROLE_USER'];
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        $this->plainPassword = null;
+    }
+    
 
     /**
      * @return Collection<int, Commande>
