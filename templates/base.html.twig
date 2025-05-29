@@ -12,11 +12,12 @@
 
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
-{% for message in app.flashes('success') %}
-    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 text-center shadow">
+    {% for message in app.flashes('success') %}
+        <div id="flash-message"
+        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity duration-1000 ease-in-out opacity-100">
         {{ message }}
-    </div>
-{% endfor %}
+        </div>
+    {% endfor %}
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
@@ -28,7 +29,13 @@
         <div>
             <ul class="flex justify-center gap-4 md:justify-end">
                 <li class="flex items-end">
+                    {% if app.user %}
+                    <form action="{{ path('app_logout') }}" method="POST">
+                        <button type="submit" class="hover:text-yellow-400 transition">Déconnexion</button>
+                    </form>
+                    {% else %}
                     <a href="{{ path('app_connection') }}" class="hover:text-yellow-400 transition">Connexion</a>
+                    {% endif %}
                 </li>
                 <li>
                     <a class="flex items-end gap-2" href="{{ path('app_account') }}">
@@ -48,7 +55,8 @@
 
     <!-- Navigation mobile -->
     <nav class="bg-gray-800 text-white py-3 shadow-md md:hidden">
-        <button id="burger-btn" class="flex justify-center ml-6 md:hidden text-white text-3xl" aria-label="Ouvrir le menu">
+        <button id="burger-btn" class="flex justify-center ml-6 md:hidden text-white text-3xl"
+            aria-label="Ouvrir le menu">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -89,6 +97,15 @@
     {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
     {% endblock %}
+    <script>
+    setTimeout(() => {
+        const flash = document.getElementById('flash-message');
+        if (flash) {
+            flash.classList.add('opacity-0');
+            setTimeout(() => flash.remove(), 1000); // Supprime du DOM après fade-out
+        }
+    }, 3000);
+    </script>
 </body>
 
 </html>
