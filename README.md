@@ -128,6 +128,63 @@ fontSize: {
       '7xl': '5rem',
     }
 
+## Sécurité les 3 principaux types d’injections et protections
+
+### 1. Injection SQL
+
+        But : insérer du code SQL malveillant dans un champ de formulaire pour manipuler la base de données (ex : email = ' OR 1=1 --).
+
+        Exemple d'attaque :
+
+        sql
+            SELECT * FROM users WHERE email = '' OR 1=1 --';
+
+        Protection :
+
+            Utiliser Doctrine ou PDO avec des requêtes préparées (? ou :param).
+
+            Ne jamais concaténer directement les entrées utilisateur dans les requêtes SQL.
+
+            Valider et filtrer les entrées côté serveur.
+
+
+### 2. Injection XSS (Cross-Site Scripting)
+
+        But : injecter du JavaScript malveillant dans une page web pour voler des données (ex : cookies, identifiants).
+
+        Exemple d'attaque :
+
+            <script>alert('XSS')</script>
+
+        Protection :
+
+            Utiliser Twig qui échappe automatiquement les variables avec {{ }}.
+
+            Éviter d’utiliser |raw sauf si c’est nécessaire et sûr.
+
+            Filtrer les entrées utilisateur (ex : via htmlspecialchars, validation HTML, etc.).
+
+
+### 3. CSRF (Cross-Site Request Forgery)
+
+        But : forcer un utilisateur connecté à effectuer une action non voulue sur un autre site.
+
+        Exemple d'attaque :
+            Un formulaire malveillant soumis automatiquement à l’insu de l’utilisateur.
+
+        Protection :
+
+            Utiliser les tokens CSRF avec Symfony :
+
+            Dans security.yaml : enable_csrf: true
+
+            Dans les formulaires : <input type="hidden" name="_csrf_token" value="{{ csrf_token('id') }}">
+
+            Vérifier systématiquement les tokens côté serveur.
+
+            Restreindre les actions sensibles à la méthode POST.
+
+
 <!-- Pour rendre ce formulaire dynamique plus tard, tu utiliseras Symfony Forms.
 
 Pour la validation visuelle : ajoute des classes conditionnelles ou des petits messages d’erreur dans les prochaines versions. -->
