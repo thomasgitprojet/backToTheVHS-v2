@@ -1,3 +1,6 @@
+parameters:
+        uploads_directory: '%kernel.project_dir%/public/uploads/images'
+
 services:
     App\EventListener\LoginSuccessListener:
         tags:
@@ -13,3 +16,4 @@ services:
             - '../src/Kernel.php'
         autowire: true
         autoconfigure: true
+    
