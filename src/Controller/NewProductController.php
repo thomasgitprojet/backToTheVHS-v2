@@ -20,7 +20,7 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
 {
     $product = new Product();
     $form = $this->createForm(ProductType::class, $product, [
-    'autocomplete_url' => $this->generateUrl('api_movies_search'),
+    'autocomplete_url' => $this->generateUrl('movies_autocomplete'),
     ]);
 
     $form->handleRequest($request);
@@ -64,27 +64,4 @@ public function new(Request $request, EntityManagerInterface $entityManager): Re
     ]);
 }
 
-    #[Route('/api/movies/search', name: 'api_movies_search')]
-    public function searchMovies(Request $request, MoviesRepository $moviesRepository): JsonResponse
-    {
-        $term = $request->query->get('term', '');
-
-        $movies = $moviesRepository->createQueryBuilder('m')
-            ->where('LOWER(m.title) LIKE :term')
-            ->setParameter('term', '%' . strtolower($term) . '%')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult();
-
-        // $results = [];
-
-        // foreach ($movies as $movie) {
-        //     $results[] = $movie->getTitle();
-        // }
-
-        return new JsonResponse(array_map(fn($movie) => [
-            'id' => $movie->getId(),
-            'title' => $movie->getTitle(),
-        ], $movies));
-    }
 }

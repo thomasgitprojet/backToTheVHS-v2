@@ -17,15 +17,9 @@ class MovieController extends AbstractController
 
         $movies = $moviesRepository->findByTitleLike($term);
 
-        $results = [];
-
-        foreach ($movies as $movie) {
-            $results[] = [
-                'id' => $movie->getId(),
-                'title' => $movie->getTitle(),
-            ];
-        }
-
-        return new JsonResponse($results);
+        return new JsonResponse(array_map(fn($movie) => [
+            'id' => $movie->getId(),
+            'title' => $movie->getTitle(),
+        ], $movies));
     }
 }
