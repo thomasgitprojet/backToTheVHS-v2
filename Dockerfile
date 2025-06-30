@@ -74,8 +74,12 @@ RUN set -eux; \
 	;
 
 # --- AJOUT POUR NODE.JS ---
-	RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+RUN /bin/bash -o pipefail -c '\
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/* \
+'
 # --------------------------
 
 COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
