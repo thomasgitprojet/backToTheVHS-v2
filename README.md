@@ -55,7 +55,7 @@ Created by [Kévin Dunglas](https://dunglas.dev), co-maintained by [Maxime Helia
 Symfony MakerBundle permet de générer rapidement du code pour votre projet. Voici quelques commandes essentielles :
 
 ##  Créer un contrôleur :
-php bin/console make:controller NomDuController:
+docker-compose exec php bin/console make:controller NomDuController:
 
 
 ##  Créer une entité (table en base de données) :
@@ -128,66 +128,101 @@ fontSize: {
       '7xl': '5rem',
     }
 
-<!-- Pour rendre ce formulaire dynamique plus tard, tu utiliseras Symfony Forms.
+## Sécurité les 3 principaux types d’injections et protections
 
-Pour la validation visuelle : ajoute des classes conditionnelles ou des petits messages d’erreur dans les prochaines versions. -->
+### 1. Injection SQL
 
-<!-- <div class="bg-contain bg-repeat-round md:flex flex-col items-center md:py-12 md:gap-6"
-    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+        But : insérer du code SQL malveillant dans un champ de formulaire pour manipuler la base de données (ex : email = ' OR 1=1 --).
 
-    <div class="w-full max-w-xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
-        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">Créer un compte</h2>
+        Exemple d'attaque :
 
-        <form>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="lastname" class="block text-sm font-medium text-white mb-1">Nom</label>
-                    <input type="text" id="lastname" name="lastname" placeholder="Votre nom"
-                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                </div>
-                <div>
-                    <label for="firstname" class="block text-sm font-medium text-white mb-1">Prénom</label>
-                    <input type="text" id="firstname" name="firstname" placeholder="Votre prénom"
-                        class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                </div>
-            </div>
+        sql
+            SELECT * FROM users WHERE email = '' OR 1=1 --';
 
-            <div class="mb-4">
-                <label for="pseudo" class="block text-sm font-medium text-white mb-1">Pseudo</label>
-                <input type="text" id="pseudo" name="pseudo" placeholder="Votre pseudo"
-                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            </div>
+        Protection :
 
-            <div class="mb-4">
-                <label for="age" class="block text-sm font-medium text-white mb-1">Âge</label>
-                <input type="number" id="age" name="age" placeholder="Votre âge"
-                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            </div>
+            Utiliser Doctrine ou PDO avec des requêtes préparées (? ou :param).
 
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-white mb-1">Adresse email</label>
-                <input type="email" id="email" name="email" placeholder="Votre email"
-                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            </div>
+            Ne jamais concaténer directement les entrées utilisateur dans les requêtes SQL.
 
-            <div class="mb-4">
-                <label for="password" class="block text-sm font-medium text-white mb-1">Mot de passe</label>
-                <input type="password" id="password" name="password" placeholder="Votre mot de passe"
-                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            </div>
+            Valider et filtrer les entrées côté serveur.
 
-            <div class="mb-6">
-                <label for="confirm_password" class="block text-sm font-medium text-white mb-1">Confirmer le mot de
-                    passe</label>
-                <input type="password" id="confirm_password" name="confirm_password"
-                    placeholder="Confirmez votre mot de passe"
-                    class="w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-            </div>
 
-            <button type="submit"
-                class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
-                Créer mon compte
-            </button>
-        </form>
-    </div>
-</div> -->
+### 2. Injection XSS (Cross-Site Scripting)
+
+        But : injecter du JavaScript malveillant dans une page web pour voler des données (ex : cookies, identifiants).
+
+        Exemple d'attaque :
+
+            <script>alert('XSS')</script>
+
+        Protection :
+
+            Utiliser Twig qui échappe automatiquement les variables avec {{ }}.
+
+            Éviter d’utiliser |raw sauf si c’est nécessaire et sûr.
+
+            Filtrer les entrées utilisateur (ex : via htmlspecialchars, validation HTML, etc.).
+
+
+### 3. CSRF (Cross-Site Request Forgery)
+
+        But : forcer un utilisateur connecté à effectuer une action non voulue sur un autre site.
+
+        Exemple d'attaque :
+            Un formulaire malveillant soumis automatiquement à l’insu de l’utilisateur.
+
+        Protection :
+
+            Utiliser les tokens CSRF avec Symfony :
+
+            Dans security.yaml : enable_csrf: true
+
+            Dans les formulaires : <input type="hidden" name="_csrf_token" value="{{ csrf_token('id') }}">
+
+            Vérifier systématiquement les tokens côté serveur.
+
+            Restreindre les actions sensibles à la méthode POST.
+
+## Schéma illustré
+
+     +--------------------+
+      | Saisie utilisateur |
+      +--------------------+
+                |
+                v
+      +----------------------+
+      | movieTitle (input)   |
+      +----------------------+
+                |
+                v
+     [ JS → AJAX GET /api/movies/search?term=Ince ]
+                |
+                v
+    +------------------------------+
+    | Symfony Controller           |
+    | - MoviesRepository           |
+    | - Renvoie JSON [{id, title}] |
+    +------------------------------+
+                |
+                v
+    +---------------------------+
+    | Liste suggestions (HTML) |
+    | onClick : remplissage     |
+    |  - movieTitle             |
+    |  - movieId (hidden)       |
+    +---------------------------+
+                |
+                v
+    [ Soumission formulaire ]
+                |
+                v
+    +--------------------------+
+    | Controller Symfony       |
+    | - Récupère movieId       |
+    | - setMovie(find($id))    |
+    | - persist + flush        |
+    +--------------------------+
+
+    
+<!-- <img src="{{ asset('uploads/' ~ product.image) }}" alt="Image du produit"> -->

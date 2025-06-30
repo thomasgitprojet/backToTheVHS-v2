@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class ConnectionController extends AbstractController
 {
     #[Route('/connexion', name: 'app_connection')]
-    public function index(AuthenticationUtils $authenticationUtils): Response
+    public function index(AuthenticationUtils $authenticationUtils): Response // $authenticationUtils est une instance de la classe AuthenticationUtils, fournie par Symfony. getLastAuthenticationError() est une méthode de cette classe.
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();

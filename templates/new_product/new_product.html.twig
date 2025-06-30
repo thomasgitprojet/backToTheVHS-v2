@@ -4,43 +4,131 @@
 {% block title %}Hello NewProductController!{% endblock %}
 
 {% block content %}
-    <div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
-        style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
-        <div class="max-w-2xl mx-auto mt-12 bg-gray-800/50 p-8 rounded-lg shadow-lg text-white">
-            <h2 class="text-2xl font-bold mb-6 text-center">📝 Créer une nouvelle annonce</h2>
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:py-12 md:gap-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
 
-            <form action="#" method="post" enctype="multipart/form-data" class="space-y-6">
-                <!-- Nom du produit -->
-                <div>
-                <label for="nom" class="block text-sm font-medium mb-1">Nom du produit</label>
-                <input type="text" id="nom" name="nom" class="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                </div>
+    <div class="w-full max-w-xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
+        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">📝 Créer une nouvelle annonce</h2>
 
-                <!-- Description -->
-                <div>
-                <label for="description" class="block text-sm font-medium mb-1">Description</label>
-                <textarea id="description" name="description" rows="4" class="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
-                </div>
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+        <div class="mb-4">
+            {{ form_label(form.movieTitle, null, {'label_attr': {'class': 'block text-sm font-medium text-white mb-1'}})
+            }}
+            {{ form_widget(form.movieTitle, {
+            'attr': {
+            'class': 'autocomplete-input w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600
+            placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400',
+            'data-autocomplete-url': path('movies_autocomplete')
+            }
+            }) }}
 
-                <!-- Prix -->
-                <div>
-                <label for="prix" class="block text-sm font-medium mb-1">Prix (en €)</label>
-                <input type="number" id="prix" name="prix" step="0.01" class="w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                </div>
-
-                <!-- Image -->
-                <div>
-                <label for="image" class="block text-sm font-medium mb-1">Image du produit</label>
-                <input type="file" id="image" name="image" accept="image/*" class="w-full text-sm text-gray-300 file:bg-yellow-400 file:text-black file:font-semibold file:py-2 file:px-4 file:rounded-md file:border-0 hover:file:bg-yellow-500">
-                </div>
-
-                <!-- Bouton de soumission -->
-                <div class="text-center pt-4">
-                <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded-md text-sm">
-                    ✅ Publier l’annonce
-                </button>
-                </div>
-            </form>
+            {{ form_widget(form.movieId, {
+            'attr': {'class': 'movie-id-hidden'}
+            }) }}
         </div>
+
+        <div class="mb-4">
+            {{ form_label(form.descriptionProduct, null, {'label_attr': {'class': 'block text-sm font-medium text-white
+            mb-1'}}) }}
+            {{ form_widget(form.descriptionProduct, {'attr': {
+            'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-yellow-400'
+            }}) }}
+        </div>
+
+        <div class="mb-4">
+            {{ form_label(form.priceProduct, null, {'label_attr': {'class': 'block text-sm font-medium text-white
+            mb-1'}}) }}
+            {{ form_widget(form.priceProduct, {'attr': {
+            'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-yellow-400'
+            }}) }}
+        </div>
+
+        <div class="mb-6">
+            {{ form_label(form.slug, null, {'label_attr': {'class': 'block text-sm font-medium text-white mb-1'}}) }}
+            {{ form_widget(form.slug, {'attr': {
+            'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400
+            focus:outline-none focus:ring-2 focus:ring-yellow-400'
+            }}) }}
+        </div>
+
+        <div class="text-center pt-4">
+            <button type="submit"
+                class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
+                ✅ Publier l’annonce
+            </button>
+        </div>
+        {{ form_end(form) }}
     </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.querySelector('.autocomplete-input');
+        const hiddenId = document.querySelector('.movie-id-hidden');
+
+        let timeout;
+        let list;
+
+        input.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const query = input.value.trim();
+                if (query.length < 2) return;
+
+                const url = input.dataset.autocompleteUrl + '?term=' + encodeURIComponent(query);
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(results => {
+                        if (!list) {
+                            list = document.createElement('ul');
+                            list.id = 'autocomplete-list';
+                            list.style.background = 'white';
+                            list.style.color = 'black';
+                            list.style.border = '1px solid gray';
+                            list.style.position = 'absolute';
+                            list.style.zIndex = 1000;
+                            list.style.width = input.offsetWidth + 'px';
+                            list.style.maxHeight = '200px';
+                            list.style.overflowY = 'auto';
+                            input.parentNode.appendChild(list);
+                        }
+
+                        list.innerHTML = '';
+                        list.style.display = 'block';
+
+                        results.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = item.title;
+                            li.style.padding = '4px';
+                            li.style.cursor = 'pointer';
+                            li.addEventListener('click', () => {
+                                input.value = item.title;
+                                hiddenId.value = item.id;
+                                list.style.display = 'none';
+                            });
+                            li.addEventListener('mouseover', () => {
+                                li.style.background = '#f0f0f0';
+                            });
+                            li.addEventListener('mouseout', () => {
+                                li.style.background = 'white';
+                            });
+                            list.appendChild(li);
+                        });
+                    });
+            }, 300);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!list || !input) return;
+            if (e.target !== input && !list.contains(e.target)) {
+                list.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
 {% endblock %}

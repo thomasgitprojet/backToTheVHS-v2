@@ -16,20 +16,15 @@ class MoviesRepository extends ServiceEntityRepository
         parent::__construct($registry, Movies::class);
     }
 
-    //    /**
-    //     * @return Movies[] Returns an array of Movies objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findByTitleLike(string $term): array
+    {
+    return $this->createQueryBuilder('m')
+        ->where('LOWER(m.title) LIKE :term')
+        ->setParameter('term', '%' . strtolower($term) . '%')
+        ->setMaxResults(10)
+        ->getQuery()
+        ->getResult();
+    }
 
     //    public function findOneBySomeField($value): ?Movies
     //    {

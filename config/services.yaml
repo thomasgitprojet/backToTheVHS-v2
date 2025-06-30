@@ -1,9 +1,7 @@
+parameters:
+        uploads_directory: '%kernel.project_dir%/public/uploads/images'
+
 services:
-    App\EventListener\LoginSuccessListener:
-        tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onLoginSuccess }
-        autowire: true
-        autoconfigure: true
 
     App\:
         resource: '../src/'
@@ -13,3 +11,4 @@ services:
             - '../src/Kernel.php'
         autowire: true
         autoconfigure: true
+    
