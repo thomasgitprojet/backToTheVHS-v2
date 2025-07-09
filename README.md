@@ -74,6 +74,8 @@ docker-compose exec php bin/console make:migration
 ##  Créer un formulaire :
 docker-compose exec php bin/console make:form
 
+##  Créer une fixture :
+docker-compose exec php php bin/console doctrine:fixtures:load
 
 ##  Créer un utilisateur (avec sécurité) :
 php bin/console make:user

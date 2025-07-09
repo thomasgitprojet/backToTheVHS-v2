@@ -46,10 +46,9 @@
         </div>
 
         <div class="mb-6">
-            {{ form_label(form.slug, null, {'label_attr': {'class': 'block text-sm font-medium text-white mb-1'}}) }}
-            {{ form_widget(form.slug, {'attr': {
-            'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400
-            focus:outline-none focus:ring-2 focus:ring-yellow-400'
+            {{ form_label(form.imageFile, null, {'label_attr': {'class': 'block text-sm font-medium text-white mb-1'}}) }}
+            {{ form_widget(form.imageFile, {'attr': {
+                'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'
             }}) }}
         </div>
 
@@ -70,8 +69,10 @@
 
         let timeout;
         let list;
+        let latestResults = [];
 
         input.addEventListener('input', () => {
+            hiddenId.value = '';
             clearTimeout(timeout);
             timeout = setTimeout(() => {
                 const query = input.value.trim();
@@ -82,6 +83,7 @@
                 fetch(url)
                     .then(response => response.json())
                     .then(results => {
+                        latestResults = results;
                         if (!list) {
                             list = document.createElement('ul');
                             list.id = 'autocomplete-list';
@@ -120,6 +122,23 @@
                     });
             }, 300);
         });
+
+        // Tentative d’auto-match lors de la soumission
+        const form = input.closest('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                if (!hiddenId.value) {
+                    const match = latestResults.find(item => item.title.toLowerCase() === input.value.trim().toLowerCase());
+                    if (match) {
+                        hiddenId.value = match.id;
+                    } else {
+                        e.preventDefault();
+                        alert('Veuillez sélectionner un film dans la liste proposée.');
+                        input.focus();
+                    }
+                }
+            });
+        }
 
         document.addEventListener('click', (e) => {
             if (!list || !input) return;

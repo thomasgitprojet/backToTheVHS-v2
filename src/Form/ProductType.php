@@ -20,7 +20,7 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-             ->add('movieTitle', TextType::class, [
+            ->add('movieTitle', TextType::class, [
                 'mapped' => false,
                 'label' => 'Titre du film',
                 'required' => true,
@@ -40,10 +40,10 @@ class ProductType extends AbstractType
                     'min' => 0,
                 ],
             ])
-            ->add('slug', FileType::class, [
+            ->add('imageFile', FileType::class, [
                 'label' => 'Image du produit',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '2M',

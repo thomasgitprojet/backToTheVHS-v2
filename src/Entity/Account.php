@@ -37,6 +37,9 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
     /**
      * @var Collection<int, Commande>
      */
@@ -140,12 +143,6 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRoles(): array
-    {
-        // Par défaut on peut retourner un rôle simple
-        return ['ROLE_USER'];
-    }
-
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
@@ -160,6 +157,22 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // Garantir que tous les comptes ont au moins ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
     
 
