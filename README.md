@@ -227,4 +227,18 @@ fontSize: {
     +--------------------------+
 
     
-<!-- <img src="{{ asset('uploads/' ~ product.image) }}" alt="Image du produit"> -->
+<!-- #[Route('/product/delete/{id}', name: 'app_delete_product', methods: ['POST'])]
+public function delete(Request $request, Product $product, EntityManagerInterface $em, ImageManager $imageManager): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+        // Supprimer l'image associée
+        if ($product->getImage()) {
+            $imageManager->deleteImage($product->getImage());
+        }
+
+        $em->remove($product);
+        $em->flush();
+    }
+
+    return $this->redirectToRoute('account_page');
+} -->

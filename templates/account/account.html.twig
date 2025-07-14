@@ -45,17 +45,17 @@
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {% for publication in user.publications %}
                 <div class="border-2 border-white rounded-md p-4 bg-gray-700 space-y-3">
-                    <img src="{{ asset('uploads/' ~ publication.imagePath) }}" alt="image produit"
+                    <img src="{{ asset('uploads/images/' ~ publication.product.image) }}" alt="image produit"
                         class="w-full h-48 object-contain rounded-md bg-black">
-                    <h4 class="text-lg font-bold">{{ publication.title }}</h4>
-                    <p class="text-sm">{{ publication.description }}</p>
-                    <p class="text-lg font-bold">Prix : {{ publication.price|number_format(2, ',', ' ') }} €</p>
+                    <h4 class="text-lg font-bold">{{ publication.product.movie.title }}</h4>
+                    <p class="text-sm">{{ publication.product.descriptionProduct }}</p>
+                    <p class="text-lg font-bold">Prix : {{ publication.product.priceProduct|number_format(2, ',', ' ') }} €</p>
                     <div class="flex justify-between pt-2">
-                        <a href="{{ path('app_edit_product', {'id': publication.id}) }}"
+                        <a href="{{ path('app_account') }}"
                             class="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded text-sm font-semibold">Modifier</a>
-                        <form method="post" action="{{ path('app_delete_product', {'id': publication.id}) }}"
+                        <form method="post" action="{{ path('app_delete_product', {id: publication.product.id}) }}"
                             onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?');">
-                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ publication.product.id) }}">
                             <button type="submit"
                                 class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold">Supprimer</button>
                         </form>

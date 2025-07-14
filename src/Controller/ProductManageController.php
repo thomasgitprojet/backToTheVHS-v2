@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Publication;
 use App\Entity\Product;
 use App\Entity\Movies;
 use App\Form\ProductType;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-final class NewProductController extends AbstractController
+final class ProductManageController extends AbstractController
 {
     #[Route('/new/product', name: 'app_new_product')]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
@@ -74,6 +75,15 @@ final class NewProductController extends AbstractController
             $entityManager->persist($product);
             $entityManager->flush();
 
+            // Création de la publication liée
+            $publication = new Publication();
+            $publication->setProduct($product);
+            $publication->setAccount($this->getUser()); 
+            $publication->setDatePublication(new \DateTime());
+
+            $entityManager->persist($publication);
+            $entityManager->flush();
+
             $this->addFlash('success', 'Annonce publiée !');
             return $this->redirectToRoute('app_account'); // ou une autre route
         }
@@ -81,6 +91,42 @@ final class NewProductController extends AbstractController
         return $this->render('new_product/new_product.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/account/product/delete/{id}', name: 'app_delete_product', methods: ['POST'])]
+    public function deleteProduct(
+        Product $product,
+        EntityManagerInterface $entityManager,
+        ImageManager $imageManager,
+        Request $request
+    ): Response {
+        // Protection CSRF (recommandée)
+        if (!$this->isCsrfTokenValid('delete' . $product->getId(), $request->request->get('_token'))) {
+            throw $this->createAccessDeniedException('Jeton CSRF invalide.');
+        }
+
+        // Vérifier que l'utilisateur est propriétaire du produit AVANT toute suppression
+        if ($product->getPublication()?->getAccount() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce produit.');
+        }
+
+        // Supprimer l’image si elle existe
+        if ($product->getImage()) {
+            $imageManager->deleteImage($product->getImage());
+        }
+
+        // Supprimer la publication associée
+        $publication = $product->getPublication();
+        if ($publication) {
+            $entityManager->remove($publication);
+        }
+
+        $entityManager->remove($product);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Produit supprimé avec succès.');
+
+        return $this->redirectToRoute('app_account');
     }
 
 }
