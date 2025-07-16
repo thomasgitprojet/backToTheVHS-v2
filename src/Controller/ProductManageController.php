@@ -7,6 +7,7 @@ use App\Entity\Product;
 use App\Entity\Movies;
 use App\Form\ProductType;
 use App\Repository\MoviesRepository;
+use App\Service\ImageManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -128,5 +129,84 @@ final class ProductManageController extends AbstractController
 
         return $this->redirectToRoute('app_account');
     }
+    #[Route('/account/product/edit/{id}', name: 'app_edit_product')]
+    public function editProduct(
+        Product $product,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        ImageManager $imageManager
+    ): Response {
+        // Vérification : l'utilisateur est-il bien le propriétaire ?
+        if ($product->getPublication()?->getAccount() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ce produit.');
+        }
 
+        // Pré-remplir les champs unmapped
+       $form = $this->createForm(ProductType::class, $product, [
+            'autocomplete_url' => $this->generateUrl('movies_autocomplete'),
+        ]);
+
+        // Préremplir les champs unmapped après la création du formulaire
+        $form->get('movieTitle')->setData($product->getMovie()?->getTitle());
+        $form->get('movieId')->setData($product->getMovie()?->getId());
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $movieTitle = $form->get('movieTitle')->getData();
+            $movieId = $form->get('movieId')->getData();
+
+            if (!$movieId) {
+                $this->addFlash('danger', 'Veuillez sélectionner un film valide.');
+                return $this->render('new_product/new_product.html.twig', [
+                    'form' => $form->createView(),
+                    'editMode' => true,
+                ]);
+            }
+
+            // Met à jour le film lié
+            $movie = $entityManager->getRepository(Movies::class)->find($movieId);
+            if (!$movie) {
+                $this->addFlash('danger', 'Film sélectionné invalide.');
+                return $this->render('new_product/new_product.html.twig', [
+                    'form' => $form->createView(),
+                    'editMode' => true,
+                ]);
+            }
+
+            $product->setMovie($movie);
+            $product->setSlug($slugger->slug($movieTitle)->lower());
+
+            // Gestion image : remplacer si une nouvelle est uploadée
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                // Supprime l’ancienne
+                if ($product->getImage()) {
+                    $imageManager->deleteImage($product->getImage());
+                }
+
+                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+                try {
+                    $imageFile->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                    $product->setImage($newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Erreur lors de l’upload de la nouvelle image.');
+                }
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Produit modifié avec succès.');
+
+            return $this->redirectToRoute('app_account');
+        }
+
+        return $this->render('new_product/new_product.html.twig', [
+            'form' => $form->createView(),
+            'editMode' => true,
+        ]);
+    }
 }

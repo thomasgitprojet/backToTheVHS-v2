@@ -38,13 +38,8 @@ class Product
     /**
      * @var Collection<int, Publication>
      */
-    #[ORM\OneToMany(targetEntity: Publication::class, mappedBy: 'product', orphanRemoval: true)]
-    private Collection $publications;
-
-    public function __construct()
-    {
-        $this->publications = new ArrayCollection();
-    }
+    #[ORM\OneToOne(mappedBy: 'product', targetEntity: Publication::class, cascade: ['persist', 'remove'])]
+    private ?Publication $publication = null;
 
     public function getId(): ?int
     {
@@ -123,33 +118,21 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, Publication>
-     */
-    public function getPublications(): Collection
+    public function getPublication(): ?Publication
     {
-        return $this->publications;
+        return $this->publication;
     }
 
-    public function addPublication(Publication $publication): static
+    public function setPublication(?Publication $publication): static
     {
-        if (!$this->publications->contains($publication)) {
-            $this->publications->add($publication);
+        $this->publication = $publication;
+
+        // set the owning side of the relation if necessary
+        if ($publication !== null && $publication->getProduct() !== $this) {
             $publication->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removePublication(Publication $publication): static
-    {
-        if ($this->publications->removeElement($publication)) {
-            // set the owning side to null (unless already changed)
-            if ($publication->getProduct() === $this) {
-                $publication->setProduct(null);
-            }
-        }
-
-        return $this;
-    }
 }

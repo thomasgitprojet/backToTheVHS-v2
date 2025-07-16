@@ -3,15 +3,16 @@
 namespace App\Service;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageManager
 {
     private string $uploadDir;
     private Filesystem $filesystem;
 
-    public function __construct(string $projectDir)
+    public function __construct(ParameterBagInterface $params)
     {
-        $this->uploadDir = $projectDir . '/public/uploads/images/';
+        $this->uploadDir = $params->get('kernel.project_dir') . '/public/uploads/images/';
         $this->filesystem = new Filesystem();
     }
 

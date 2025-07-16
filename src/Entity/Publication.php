@@ -17,7 +17,7 @@ class Publication
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $datePublication = null;
 
-    #[ORM\ManyToOne(inversedBy: 'publications')]
+    #[ORM\OneToOne(inversedBy: 'publication', targetEntity: Product::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 

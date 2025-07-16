@@ -51,7 +51,7 @@
                     <p class="text-sm">{{ publication.product.descriptionProduct }}</p>
                     <p class="text-lg font-bold">Prix : {{ publication.product.priceProduct|number_format(2, ',', ' ') }} €</p>
                     <div class="flex justify-between pt-2">
-                        <a href="{{ path('app_account') }}"
+                        <a href="{{ path('app_edit_product', {id: publication.product.id} ) }}"
                             class="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1 rounded text-sm font-semibold">Modifier</a>
                         <form method="post" action="{{ path('app_delete_product', {id: publication.product.id}) }}"
                             onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?');">

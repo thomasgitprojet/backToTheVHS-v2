@@ -8,7 +8,10 @@
     style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
 
     <div class="w-full max-w-xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
-        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">📝 Créer une nouvelle annonce</h2>
+
+        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">📝 
+            {{ editMode is defined and editMode ? 'Modifier une annonce' : 'Créer une nouvelle annonce' }}
+        </h2>
 
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
         <div class="mb-4">
@@ -55,7 +58,7 @@
         <div class="text-center pt-4">
             <button type="submit"
                 class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
-                ✅ Publier l’annonce
+                {{ editMode is defined and editMode ? '💾 Enregistrer' : '🚀 Publier' }}
             </button>
         </div>
         {{ form_end(form) }}
