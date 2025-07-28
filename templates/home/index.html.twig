@@ -14,20 +14,21 @@
         <h2 class="text-3xl font-bold text-yellow-400 text-center mb-10">Nos derniers produits ajoutés</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {% for i in 1..8 %}
-            <!-- Produit -->
-            <div class="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col">
-                <img src="{{ asset('build/images/bToVHS.png') }}" alt="Produit 1"
-                    class="rounded-md mb-4 h-48 object-contain">
-                <h3 class="text-xl font-semibold text-white mb-2">Nom du produit</h3>
-                <p class="text-sm text-gray-300 mb-4">Petite description du produit très stylé.</p>
-                <p class="text-yellow-400 font-bold text-lg mb-4">9,99 €</p>
-                <a href="{{ path('app_product') }}"
-                    class="mt-auto bg-yellow-400 text-black text-center py-2 px-4 rounded-md hover:bg-yellow-500 transition">
-                    Voir le produit
-                </a>
-            </div>
-            {% endfor %}
+            {% for publication in publications %}
+        <div class="bg-gray-800/50 p-4 rounded-lg shadow-lg flex flex-col">
+            <img src="{{ asset('uploads/images/' ~ publication.product.image) }}" alt="{{ publication.product.movie.title ?? 'Produit' }}"
+                 class="rounded-md mb-4 h-48 object-contain">
+            <h3 class="text-xl font-semibold text-white mb-2">{{ publication.product.movie.title }}</h3>
+            <p class="text-sm text-gray-300 mb-4">{{ publication.product.descriptionProduct }}</p>
+            <p class="text-yellow-400 font-bold text-lg mb-4">{{ publication.product.priceProduct|number_format(2, ',', ' ') }} €</p>
+            <a href="{{ path('app_product', {'id': publication.product.id}) }}"
+               class="mt-auto bg-yellow-400 text-black text-center py-2 px-4 rounded-md hover:bg-yellow-500 transition">
+                Voir le produit
+            </a>
+        </div>
+    {% else %}
+        <p>Aucun produit disponible pour le moment.</p>
+    {% endfor %}
         </div>
     </div>
 </div>
