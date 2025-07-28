@@ -13,8 +13,15 @@
 
         <!-- Section Infos Utilisateur -->
         <section>
-            <h2 class="text-2xl font-bold mb-6 border-b border-gray-600 pb-2">Mes informations</h2>
-            <ul class="space-y-4">
+            <div class="flex justify-between items-end mb-6">
+                <h2 class="text-2xl font-bold border-b border-gray-600 pb-2">Mes informations</h2>
+                <a href="{{ path('app_account_edit') }}"
+                class="text-yellow-400 hover:underline text-sm font-semibold">
+                    ✎ Modifier mes informations
+                </a>
+            </div>
+
+            <ul class="grid gap-4 md:grid-cols-2">
                 {% set age = user.dateBirth ? (date().diff(user.dateBirth).y) : 'N/A' %}
                 {% set infos = {
                     'Nom': user.name,
@@ -24,10 +31,10 @@
                     'Email': user.email
                 } %}
                 {% for label, value in infos %}
-                <li class="flex justify-between items-center bg-gray-700 rounded-md px-4 py-2">
-                    <span><strong>{{ label }} :</strong> {{ value }}</span>
-                    <button class="text-yellow-400 hover:underline text-sm">✎ Éditer</button>
-                </li>
+                    <li class="bg-gray-700 rounded-md px-4 py-3 shadow-sm">
+                        <p class="text-sm text-gray-300">{{ label }}</p>
+                        <p class="text-lg font-medium text-white">{{ value }}</p>
+                    </li>
                 {% endfor %}
             </ul>
         </section>
