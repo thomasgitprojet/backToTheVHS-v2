@@ -26,17 +26,20 @@ class AccountType extends AbstractType
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',
             ])
-            ->add('email')
-            ->add('plainPassword', RepeatedType::class, [
+            ->add('email');
+
+        if (!$options['is_edit']) {
+            // Ajout du mot de passe uniquement en mode création
+            $builder->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
                 'required' => true,
                 'invalid_message' => 'Les mots de passe doivent correspondre.',
-                'first_options'  => ['label' => 'Mot de passe'],
+                'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmer le mot de passe'],
                 'attr' => ['autocomplete' => 'new-password'],
             ]);
-        ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -46,6 +49,7 @@ class AccountType extends AbstractType
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             'csrf_token_id'   => 'register',
+            'is_edit' => false,
         ]);
     }
 }

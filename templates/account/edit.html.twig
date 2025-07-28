@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mes informations{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:py-12 md:gap-6"
+     style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+
+    <div class="w-full max-w-xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto text-white">
+        <h2 class="text-2xl font-bold mb-6 text-center text-yellow-400">Modifier mes informations</h2>
+
+        {{ form_start(form) }}
+        <div class="flex flex-col gap-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {{ form_row(form.name, {'row_attr': {'class': 'mb-0'}, 'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+                {{ form_row(form.firstName, {'row_attr': {'class': 'mb-0'}, 'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+            </div>
+
+            {{ form_row(form.pseudo, {'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+
+            {{ form_row(form.dateBirth, {'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+
+            {{ form_row(form.email, {'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
+        </div>
+        <button type="submit"
+                class="w-full mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
+            💾 Sauvegarder
+        </button>
+
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_account') }}" class="text-sm text-blue-400 hover:underline mt-4 inline-block text-center">
+            ⬅ Retour à mon compte
+        </a>
+    </div>
+</div>
+{% endblock %}
