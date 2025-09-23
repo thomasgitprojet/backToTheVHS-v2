@@ -12,11 +12,21 @@
 
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
-    {% for message in app.flashes('success') %}
-        <div id="flash-message"
-        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity duration-1000 ease-in-out opacity-100">
-        {{ message }}
-        </div>
+    {# Flash messages Symfony #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div
+                class="flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                        px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity 
+                        duration-1000 ease-in-out
+                        {% if label == 'success' %} bg-green-600 text-white
+                        {% elseif label == 'danger' %} bg-red-600 text-white
+                        {% elseif label == 'warning' %} bg-yellow-500 text-black
+                        {% else %} bg-gray-700 text-white
+                        {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endfor %}
 
     <!-- Header -->
@@ -43,11 +53,18 @@
                         mon compte
                     </a>
                 </li>
-                <li>
-                    <a class="flex flex items-end gap-2" href="{{ path('app_my_cart') }}">
-                        <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
-                        mon panier
-                    </a>
+                <li class="relative">
+                    <a class="flex items-end gap-2" href="{{ path('app_my_cart') }}">
+                    <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
+                    mon panier
+                    {% set cartCount = app.session.get('cart') ? app.session.get('cart')|length : 0 %}
+                    {% if cartCount > 0 %}
+                        <span id="cart-count"
+                            class="absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                            {{ cartCount }}
+                        </span>
+                    {% endif %}
+                </a>
                 </li>
             </ul>
         </div>
@@ -76,7 +93,7 @@
         </ul>
     </nav>
 
-    <!-- Navigation descktop -->
+    <!-- Navigation desktop -->
     <nav class="bg-gray-800 text-white py-3 px-6 shadow-md hidden md:block">
         <ul class="flex justify-center gap-6 text-lg font-medium md:text-2xl">
             <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
@@ -94,18 +111,54 @@
     <footer class="bg-black text-center text-sm text-gray-500 py-4">
         &copy; {{ "now"|date("Y") }} Back To The VHS - Tous droits réservés
     </footer>
+
     {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
     {% endblock %}
+
+    {# Script Flash Messages #}
     <script>
-    setTimeout(() => {
-        const flash = document.getElementById('flash-message');
-        if (flash) {
-            flash.classList.add('opacity-0');
-            setTimeout(() => flash.remove(), 1000); // Supprime du DOM après fade-out
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(flash => {
+                flash.classList.add('opacity-0');
+                setTimeout(() => flash.remove(), 1000);
+            });
+        }, 3000);
+    </script>
+
+    {# Script ajout au panier et compteur dynamique #}
+    <script>
+        function addToCart(productId) {
+            fetch(`/cart/add/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Met à jour le compteur
+                    let counter = document.getElementById('cart-count');
+                    if (!counter) {
+                        counter = document.createElement('span');
+                        counter.id = 'cart-count';
+                        counter.className = 'absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center';
+                        document.querySelector('a[href$="/my/cart"]').appendChild(counter);
+                    }
+                    counter.textContent = data.count;
+
+                    // Crée et affiche le flash message
+                    const flash = document.createElement('div');
+                    flash.className = `flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity duration-1000 ease-in-out ${
+                        data.type === 'danger' ? 'bg-red-600 text-white' :
+                        data.type === 'warning' ? 'bg-yellow-500 text-black' :
+                        'bg-green-600 text-white'
+                    }`;
+                    flash.textContent = data.message;
+                    document.body.appendChild(flash);
+
+                    setTimeout(() => {
+                        flash.classList.add('opacity-0');
+                        setTimeout(() => flash.remove(), 1000);
+                    }, 3000);
+                })
+                .catch(() => alert("Impossible d'ajouter le produit pour le moment."));
         }
-    }, 3000);
     </script>
 </body>
-
 </html>
