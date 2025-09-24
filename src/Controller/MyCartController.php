@@ -11,14 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class MyCartController extends AbstractController
 {
-    // Route pour afficher la page du panier
     #[Route('/my/cart', name: 'app_my_cart')]
     public function index(SessionInterface $session, PublicationRepository $publicationRepository): Response
     {
-        // Récupérer les IDs des produits dans le panier
         $cartIds = $session->get('cart', []);
-
-        // Récupérer les publications correspondantes
         $cartItems = $publicationRepository->findBy(['id' => $cartIds]);
 
         return $this->render('my_cart/my_cart.html.twig', [
@@ -26,35 +22,52 @@ final class MyCartController extends AbstractController
         ]);
     }
 
-    #[Route('/cart/add/{id}', name: 'app_cart_add')]
-    public function add(
-        int $id,
-        PublicationRepository $publicationRepository,
-        SessionInterface $session
-    ): JsonResponse {
-        // Vérifie que l'utilisateur est connecté
+    #[Route('/cart/add/{id}', name: 'app_cart_add', methods: ['POST'])]
+    public function add(int $id, PublicationRepository $publicationRepository, SessionInterface $session): JsonResponse
+    {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Récupère le produit
         $publication = $publicationRepository->find($id);
         if (!$publication) {
             return $this->json([
-                'count' => $session->get('cart', []) ? count($session->get('cart')) : 0,
+                'count' => count($session->get('cart', [])),
                 'message' => 'Produit introuvable.',
                 'type' => 'danger'
             ]);
         }
 
-        // Récupère le panier ou crée un tableau vide
         $cart = $session->get('cart', []);
-        $cart[] = $id;
+        if (!in_array($id, $cart)) {
+            $cart[] = $id;
+        }
         $session->set('cart', $cart);
 
-        // Renvoie JSON pour AJAX
         return $this->json([
             'count' => count($cart),
             'message' => $publication->getProduct()->getMovie()->getTitle() . ' ajouté au panier !',
             'type' => 'success'
+        ]);
+    }
+
+    #[Route('/cart/remove/{id}', name: 'cart_remove', methods: ['POST'])]
+    public function remove(int $id, SessionInterface $session): JsonResponse
+    {
+        $cart = $session->get('cart', []);
+
+        if (($key = array_search($id, $cart)) !== false) {
+            unset($cart[$key]);
+            $session->set('cart', array_values($cart));
+            $message = 'Le produit a été retiré du panier.';
+            $type = 'success';
+        } else {
+            $message = 'Le produit n’était pas dans le panier.';
+            $type = 'danger';
+        }
+
+        return $this->json([
+            'count' => count($cart),
+            'message' => $message,
+            'type' => $type
         ]);
     }
 }

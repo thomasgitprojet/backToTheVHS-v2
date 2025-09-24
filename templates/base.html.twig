@@ -10,24 +10,7 @@
     {% endblock %}
 </head>
 
-<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
-
-    {# Flash messages Symfony #}
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div
-                class="flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                        px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity 
-                        duration-1000 ease-in-out
-                        {% if label == 'success' %} bg-green-600 text-white
-                        {% elseif label == 'danger' %} bg-red-600 text-white
-                        {% elseif label == 'warning' %} bg-yellow-500 text-black
-                        {% else %} bg-gray-700 text-white
-                        {% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endfor %}
+<body data-flashes='{{ app.flashes|json_encode|e('html_attr') }}' class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
@@ -116,49 +99,112 @@
     {{ encore_entry_script_tags('app') }}
     {% endblock %}
 
-    {# Script Flash Messages #}
-    <script>
-        setTimeout(() => {
-            document.querySelectorAll('.flash-message').forEach(flash => {
-                flash.classList.add('opacity-0');
-                setTimeout(() => flash.remove(), 1000);
-            });
-        }, 3000);
-    </script>
 
     {# Script ajout au panier et compteur dynamique #}
     <script>
         function addToCart(productId) {
-            fetch(`/cart/add/${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Met à jour le compteur
-                    let counter = document.getElementById('cart-count');
-                    if (!counter) {
-                        counter = document.createElement('span');
-                        counter.id = 'cart-count';
-                        counter.className = 'absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center';
-                        document.querySelector('a[href$="/my/cart"]').appendChild(counter);
-                    }
-                    counter.textContent = data.count;
+            fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Met à jour le compteur du panier
+                let counter = document.getElementById('cart-count');
+                if (!counter) {
+                    counter = document.createElement('span');
+                    counter.id = 'cart-count';
+                    counter.className = 'absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center';
+                    document.querySelector('a[href$="/my/cart"]').appendChild(counter);
+                }
+                counter.textContent = data.count;
 
-                    // Crée et affiche le flash message
-                    const flash = document.createElement('div');
-                    flash.className = `flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity duration-1000 ease-in-out ${
-                        data.type === 'danger' ? 'bg-red-600 text-white' :
-                        data.type === 'warning' ? 'bg-yellow-500 text-black' :
-                        'bg-green-600 text-white'
-                    }`;
-                    flash.textContent = data.message;
-                    document.body.appendChild(flash);
+                // Affiche le flash
+                if (data.type === 'success') {
+                    showFlash(data.message, 'success', {
+                        persistent: true,
+                        actions: [
+                            {
+                                label: "Continuer mes achats",
+                                onClick: "this.closest('.flash-message').remove()",
+                                class: "bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                            },
+                            {
+                                label: "Voir mon panier",
+                                onClick: "window.location.href='/my/cart'",
+                                class: "bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-md"
+                            }
+                        ]
+                    });
+                } else {
+                    showFlash(data.message, data.type); // disparaît automatiquement
+                }
+            })
+            .catch(() => {
+                showFlash("Impossible d'ajouter le produit pour le moment.", 'danger');
+            });
+        }
+    </script>
 
+    <script>
+        function showFlash(message, type = 'success', options = {}) {
+            const flash = document.createElement('div');
+            flash.className = `flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                            px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity 
+                            duration-1000 ease-in-out ${
+                                type === 'danger' ? 'bg-red-600 text-white' :
+                                type === 'warning' ? 'bg-yellow-500 text-black' :
+                                'bg-green-600 text-white'
+                            }`;
+            
+            if (options.actions) {
+                // Si on fournit des actions (ex: boutons)
+                flash.innerHTML = `
+                    <p>${message}</p>
+                    <div class="mt-4 flex gap-4 justify-center">
+                        ${options.actions.map(action =>
+                            `<button onclick="${action.onClick}" 
+                                    class="${action.class}">${action.label}</button>`
+                        ).join('')}
+                    </div>
+                `;
+            } else {
+                // Message simple
+                flash.textContent = message;
+
+                // Auto-disparition par défaut (sauf si désactivé)
+                if (!options.persistent) {
                     setTimeout(() => {
                         flash.classList.add('opacity-0');
                         setTimeout(() => flash.remove(), 1000);
-                    }, 3000);
-                })
-                .catch(() => alert("Impossible d'ajouter le produit pour le moment."));
+                    }, options.timeout || 3000);
+                }
+            }
+
+            document.body.appendChild(flash);
         }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    // Mapping labels Symfony vers types utilisés par showFlash
+    const labelMapping = {
+        success: 'success',
+        danger: 'danger',
+        warning: 'warning',
+        info: 'info' // tu peux ajouter d'autres labels si besoin
+    };
+
+    // Récupère les flashes depuis le data-attribute
+    const flashes = JSON.parse(document.body.dataset.flashes || '{}');
+ 
+    for (const label in flashes) {
+        const type = labelMapping[label] || 'success'; // fallback
+        flashes[label].forEach(message => {
+            showFlash(message, type);
+        });
+    }
+});
     </script>
 </body>
 </html>
