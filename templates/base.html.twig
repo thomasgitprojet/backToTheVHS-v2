@@ -15,9 +15,14 @@
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
         <div class="text-center md:flex flex-col md:items-start md:pt-12">
-            <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS"
-                class="w-64 mx-auto md:w-96 md:mx-0">
-            <p class="text-sm text-yellow-400 mt-2 mb-4 md:text-lg md:pl-12">La vintage n’a jamais été aussi stylé</p>
+            <a href="{{ path('home') }}" 
+            class="inline-block transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-lg hover:animate-bounce-vhs">
+                <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS"
+                    class="w-64 mx-auto md:w-96 md:mx-0 filter hover:contrast-125 hover:brightness-110 hover:saturate-150">
+            </a>
+            <p class="text-sm text-yellow-400 mt-2 mb-4 md:text-lg md:pl-12">
+                La vintage n’a jamais été aussi stylé
+            </p>
         </div>
         <div>
             <ul class="flex justify-center gap-4 md:justify-end">
@@ -136,8 +141,12 @@
                             }
                         ]
                     });
+                } else if (data.type === 'warning') {
+                    // Produit déjà présent
+                    showFlash(data.message, 'warning'); // disparaît automatiquement
                 } else {
-                    showFlash(data.message, data.type); // disparaît automatiquement
+                    // Cas danger ou autre
+                    showFlash(data.message, data.type);
                 }
             })
             .catch(() => {
@@ -148,31 +157,34 @@
 
     <script>
         function showFlash(message, type = 'success', options = {}) {
+            const typeClasses = {
+                success: 'bg-green-600 text-white',
+                warning: 'bg-yellow-400 text-black',
+                danger: 'bg-red-600 text-white',
+                info: 'bg-blue-600 text-white'
+            };
+
             const flash = document.createElement('div');
             flash.className = `flash-message fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                            px-6 py-4 rounded-lg shadow-lg z-50 text-center text-lg transition-opacity 
-                            duration-1000 ease-in-out ${
-                                type === 'danger' ? 'bg-red-600 text-white' :
-                                type === 'warning' ? 'bg-yellow-500 text-black' :
-                                'bg-green-600 text-white'
-                            }`;
-            
+                            px-6 py-4 rounded-2xl shadow-2xl z-50 text-center text-lg transition-opacity 
+                            duration-1000 ease-in-out ${typeClasses[type] || typeClasses.success}`;
+
             if (options.actions) {
-                // Si on fournit des actions (ex: boutons)
                 flash.innerHTML = `
-                    <p>${message}</p>
-                    <div class="mt-4 flex gap-4 justify-center">
+                    <p class="mb-4">${message}</p>
+                    <div class="flex gap-3 justify-center">
                         ${options.actions.map(action =>
                             `<button onclick="${action.onClick}" 
-                                    class="${action.class}">${action.label}</button>`
+                                    class="px-4 py-2 rounded-xl shadow-md transition
+                                            ${action.class}">
+                                ${action.label}
+                            </button>`
                         ).join('')}
                     </div>
                 `;
             } else {
-                // Message simple
                 flash.textContent = message;
 
-                // Auto-disparition par défaut (sauf si désactivé)
                 if (!options.persistent) {
                     setTimeout(() => {
                         flash.classList.add('opacity-0');

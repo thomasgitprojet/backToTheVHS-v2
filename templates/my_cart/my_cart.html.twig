@@ -4,7 +4,7 @@
 {% block title %}Mon Panier{% endblock %}
 
 {% block content %}
-<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+<div class="bg-contain bg-repeat-round flex flex-col items-center min-h-screen pt-20 md:pt-32 md:gap-6"
      style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
 
     <div class="w-full max-w-4xl bg-gray-800/50 rounded-lg shadow-lg p-8 mx-auto">
@@ -20,7 +20,7 @@
                             class="w-24 h-24 object-contain rounded-md mb-4 md:mb-0 md:mr-6">
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold text-white">{{ publication.product.movie.title }}</h3>
-                            <p class="text-sm text-gray-300">Prix unitaire : {{ publication.product.priceProduct }} €</p>
+                            <p class="text-sm text-gray-300" data-price="{{ publication.product.priceProduct }}">Prix unitaire : {{ publication.product.priceProduct }} €</p>
                         </div>
                         <button onclick="removeFromCart('{{ publication.id }}')"
                                 class="mt-4 md:mt-0 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm">
@@ -34,7 +34,7 @@
             <div class="mt-8 border-t border-gray-600 pt-6 text-right">
                 <p class="text-lg font-semibold text-white mb-4">
                     Total du panier : 
-                    <span class="text-yellow-400">
+                    <span id="cart-total" class="text-yellow-400">
                         {{ cartItems|reduce((carry, item) => carry + item.product.priceProduct, 0)|number_format(2, ',', ' ') }} €
                     </span>
                 </p>
@@ -51,50 +51,60 @@
 {% endblock %}
 
 {% block javascripts %}
-<script>
-    function removeFromCart(publicationId) {
-        fetch(`/cart/remove/${publicationId}`, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.type === 'success') {
-                // Supprime le bloc produit du DOM
-                const item = document.getElementById(`cart-item-${publicationId}`);
-                if (item) item.remove();
-            }
+    {{ parent() }}
+    <script>
+        function removeFromCart(publicationId) {
+            fetch(`/cart/remove/${publicationId}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.type === 'success') {
+                    // Supprime le bloc produit du DOM
+                    const item = document.getElementById(`cart-item-${publicationId}`);
+                    if (item) item.remove();
+                }
 
-            // Met à jour le compteur du panier
-            const cartCount = document.getElementById('cart-count');
-            if (cartCount) {
-                cartCount.textContent = data.count;
-            }
+                // Met à jour le compteur du panier
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = data.count;
 
-            // Affiche le flash UX-friendly
-            if (data.type === 'success') {
-                showFlash(data.message, 'success', {
-                    persistent: true,
-                    actions: [
-                        {
-                            label: "Continuer mes achats",
-                            onClick: "this.closest('.flash-message').remove()",
-                            class: "bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
-                        },
-                        {
-                            label: "Voir mon panier",
-                            onClick: "window.location.href='/my/cart'",
-                            class: "bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-md"
-                        }
-                    ]
+                    if (data.count === 0) {
+                        cartCount.remove();
+                    }
+                }
+
+                // Recalcule le total du panier
+                const prices = document.querySelectorAll('[data-price]');
+                let total = 0;
+                prices.forEach(el => {
+                    total += parseFloat(el.dataset.price);
                 });
-            } else {
-                showFlash(data.message, data.type); // disparaît automatiquement
-            }
-        })
-        .catch(() => {
-            showFlash("Impossible de retirer le produit pour le moment.", 'danger');
-        });
-    }
-</script>
+
+                const totalEl = document.getElementById('cart-total');
+                if (totalEl) {
+                    if (total > 0) {
+                        totalEl.textContent = total.toFixed(2).replace('.', ',') + ' €';
+                    } else {
+                        // Si le panier est vide → recharger la page
+                        window.location.reload();
+                    }
+                }
+
+                // Vérifie si le panier est vide → recharger la page pour afficher "Votre panier est vide"
+                const remainingItems = document.querySelectorAll('[id^="cart-item-"]').length;
+                if (remainingItems === 0) {
+                    window.location.reload();
+                }
+
+                showFlash(data.message, data.type);
+
+            })
+            .catch(() => {
+                showFlash("Impossible de retirer le produit pour le moment.", 'danger');
+            });
+        }
+    </script>
 {% endblock %}

@@ -36,16 +36,26 @@ final class MyCartController extends AbstractController
             ]);
         }
 
+        // Récupère le panier
         $cart = $session->get('cart', []);
-        if (!in_array($id, $cart)) {
-            $cart[] = $id;
-        }
-        $session->set('cart', $cart);
 
+        // Vérifie si l’ID existe déjà
+        if (!in_array($id, $cart, true)) {
+            $cart[] = $id;
+            $session->set('cart', $cart);
+
+            return $this->json([
+                'count' => count($cart),
+                'message' => $publication->getProduct()->getMovie()->getTitle() . ' ajouté au panier !',
+                'type' => 'success'
+            ]);
+        }
+
+        // Si déjà présent → feedback utilisateur
         return $this->json([
             'count' => count($cart),
-            'message' => $publication->getProduct()->getMovie()->getTitle() . ' ajouté au panier !',
-            'type' => 'success'
+            'message' => 'Cet article est déjà dans votre panier.',
+            'type' => 'warning'
         ]);
     }
 
