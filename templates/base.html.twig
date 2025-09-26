@@ -25,34 +25,56 @@
             </p>
         </div>
         <div>
-            <ul class="flex justify-center gap-4 md:justify-end">
-                <li class="flex items-end">
+            <ul class="flex justify-center gap-4 md:justify-end items-center">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li>
+                        <a href="{{ path('app_admin_dashboard') }}" 
+                        class="flex items-center gap-2 relative group text-yellow-400 font-semibold">
+                            <img src="{{ asset('build/images/icons8-paramètres-32.png') }}" alt="icon compte"> Admin
+                            <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                <li>
                     {% if app.user %}
                     <form action="{{ path('app_logout') }}" method="POST">
-                        <button type="submit" class="hover:text-yellow-400 transition">Déconnexion</button>
+                        <button type="submit" 
+                                class="flex items-center gap-2 relative group hover:text-yellow-400 transition">
+                            Déconnexion
+                            <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                        </button>
                     </form>
                     {% else %}
-                    <a href="{{ path('app_connection') }}" class="hover:text-yellow-400 transition">Connexion</a>
+                    <a href="{{ path('app_connection') }}" 
+                    class="flex items-center gap-2 relative group">
+                        Connexion
+                        <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     {% endif %}
                 </li>
+
                 <li>
-                    <a class="flex items-end gap-2" href="{{ path('app_account') }}">
+                    <a class="flex items-center gap-2 relative group" href="{{ path('app_account') }}">
                         <img src="{{ asset('build/images/icons8-account-30.png') }}" alt="icon compte">
-                        mon compte
+                        Mon compte
+                        <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
                     </a>
                 </li>
+
                 <li class="relative">
-                    <a class="flex items-end gap-2" href="{{ path('app_my_cart') }}">
-                    <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
-                    mon panier
-                    {% set cartCount = app.session.get('cart') ? app.session.get('cart')|length : 0 %}
-                    {% if cartCount > 0 %}
-                        <span id="cart-count"
-                            class="absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                            {{ cartCount }}
-                        </span>
-                    {% endif %}
-                </a>
+                    <a class="flex items-center gap-2 relative group" href="{{ path('app_my_cart') }}">
+                        <img src="{{ asset('build/images/icons8-basket-30.png') }}" alt="">
+                        Mon panier
+                        {% set cartCount = app.session.get('cart') ? app.session.get('cart')|length : 0 %}
+                        {% if cartCount > 0 %}
+                            <span id="cart-count"
+                                class="absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                                {{ cartCount }}
+                            </span>
+                        {% endif %}
+                        <span class="absolute left-0 bottom-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                 </li>
             </ul>
         </div>
