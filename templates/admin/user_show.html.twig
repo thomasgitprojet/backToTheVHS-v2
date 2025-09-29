@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil utilisateur #{{ user.id }} | Back to the VHS{% endblock %}
+
+{% block content %}
+<div class="bg-contain bg-repeat-round min-h-screen pt-20 md:pt-32 px-6"
+    style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
+
+    <div class="max-w-6xl mx-auto bg-gray-800/70 rounded-lg shadow-lg p-8 text-white">
+        <h1 class="text-3xl font-bold text-yellow-400 mb-6">
+            Profil de {{ user.pseudo }}
+        </h1>
+
+        <!-- Infos utilisateur -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-yellow-300 mb-4">Informations personnelles</h2>
+            <ul class="space-y-2">
+                <li><strong>ID :</strong> {{ user.id }}</li>
+                <li><strong>Pseudo :</strong> {{ user.pseudo }}</li>
+                <li><strong>Email :</strong> {{ user.email }}</li>
+                <li><strong>Nom :</strong> {{ user.name }}</li>
+                <li><strong>Prénom :</strong> {{ user.firstName }}</li>
+                <li><strong>Date de naissance :</strong> {{ user.dateBirth ? user.dateBirth|date('d/m/Y') : 'Non renseignée' }}</li>
+                <li><strong>Rôles :</strong> {{ user.roles|join(', ') }}</li>
+            </ul>
+        </div>
+
+        <!-- Publications -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-yellow-300 mb-4">Publications</h2>
+            {% if user.publications|length > 0 %}
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {% for publication in user.publications %}
+                        <div class="border border-gray-600 rounded-lg p-4 bg-gray-700">
+                            <img src="{{ asset('uploads/images/' ~ publication.product.image) }}" 
+                                 alt="image produit"
+                                 class="w-full h-40 object-contain bg-black rounded-md mb-3">
+                            <h4 class="font-bold">{{ publication.product.movie.title }}</h4>
+                            <p class="text-sm text-gray-300">{{ publication.product.descriptionProduct }}</p>
+                            <p class="font-semibold mt-2">
+                                Prix : {{ publication.product.priceProduct|number_format(2, ',', ' ') }} €
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-400">Aucune publication pour cet utilisateur.</p>
+            {% endif %}
+        </div>
+
+        <!-- Commandes -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold text-yellow-300 mb-4">Commandes</h2>
+            {% if user.commandes|length > 0 %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse border border-gray-700">
+                        <thead class="bg-gray-700 text-yellow-400">
+                            <tr>
+                                <th class="border border-gray-600 px-4 py-2">ID</th>
+                                <th class="border border-gray-600 px-4 py-2">Date</th>
+                                <th class="border border-gray-600 px-4 py-2">Montant</th>
+                                <th class="border border-gray-600 px-4 py-2">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commande in user.commandes %}
+                                <tr class="hover:bg-gray-800">
+                                    <td class="border border-gray-600 px-4 py-2">{{ commande.id }}</td>
+                                    <td class="border border-gray-600 px-4 py-2">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                                    <td class="border border-gray-600 px-4 py-2">{{ commande.total|number_format(2, ',', ' ') }} €</td>
+                                    <td class="border border-gray-600 px-4 py-2">{{ commande.status }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-gray-400">Aucune commande pour cet utilisateur.</p>
+            {% endif %}
+        </div>
+
+        <!-- Bouton retour -->
+        <div class="mt-6">
+            <a href="{{ path('app_admin_dashboard') }}" 
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                ⬅ Retour au dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
