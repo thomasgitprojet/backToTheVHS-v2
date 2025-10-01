@@ -66,4 +66,30 @@ final class AdminController extends AbstractController
 
         return $this->redirectToRoute('app_admin_dashboard');
     }
+
+    #[Route('/publication/{id}/delete', name: 'app_admin_publication_delete', methods: ['POST'])]
+    public function deletePublication(
+        int $id,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
+        $publication = $em->getRepository(\App\Entity\Publication::class)->find($id);
+
+        if (!$publication) {
+            $this->addFlash('error', 'Publication introuvable.');
+            return $this->redirectToRoute('app_admin_dashboard');
+        }
+
+        // Vérif CSRF
+        if ($this->isCsrfTokenValid('delete_publication' . $publication->getId(), $request->request->get('_token'))) {
+            $em->remove($publication);
+            $em->flush();
+
+            $this->addFlash('success', 'Publication supprimée avec succès ✅');
+        } else {
+            $this->addFlash('error', 'Token CSRF invalide ❌');
+        }
+
+        return $this->redirectToRoute('app_admin_dashboard');
+    }
 }

@@ -31,15 +31,27 @@
             {% if user.publications|length > 0 %}
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {% for publication in user.publications %}
-                        <div class="border border-gray-600 rounded-lg p-4 bg-gray-700">
+                        <div class="border border-gray-600 rounded-lg p-4 bg-gray-700 flex flex-col">
                             <img src="{{ asset('uploads/images/' ~ publication.product.image) }}" 
-                                 alt="image produit"
-                                 class="w-full h-40 object-contain bg-black rounded-md mb-3">
+                                alt="image produit"
+                                class="w-full h-40 object-contain bg-black rounded-md mb-3">
                             <h4 class="font-bold">{{ publication.product.movie.title }}</h4>
                             <p class="text-sm text-gray-300">{{ publication.product.descriptionProduct }}</p>
                             <p class="font-semibold mt-2">
                                 Prix : {{ publication.product.priceProduct|number_format(2, ',', ' ') }} €
                             </p>
+
+                            <!-- Bouton Supprimer -->
+                            <form method="post"
+                                action="{{ path('app_admin_publication_delete', {id: publication.id}) }}"
+                                onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?');"
+                                class="mt-3">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_publication' ~ publication.id) }}">
+                                <button type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-semibold w-full">
+                                    🗑 Supprimer
+                                </button>
+                            </form>
                         </div>
                     {% endfor %}
                 </div>
