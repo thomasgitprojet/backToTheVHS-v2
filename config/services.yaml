@@ -1,5 +1,7 @@
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads/images'
+    recaptcha_site_key: '%env(RECAPTCHA_SITE_KEY)%'
+    recaptcha_secret_key: '%env(RECAPTCHA_SECRET_KEY)%'
 
 services:
     App\:

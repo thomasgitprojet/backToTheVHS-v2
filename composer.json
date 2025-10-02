@@ -13,6 +13,7 @@
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
+        "guzzlehttp/guzzle": "^7.10",
         "knplabs/knp-paginator-bundle": "^6.9",
         "runtime/frankenphp-symfony": "^0.2.0",
         "symfony/asset": "7.2.*",

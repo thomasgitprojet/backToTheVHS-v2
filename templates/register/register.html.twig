@@ -28,6 +28,11 @@
 
             {{ form_row(registerForm.plainPassword.second, {'attr': {'class': 'w-full px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400'}}) }}
         </div>
+
+        {# reCAPTCHA v2 #}
+        <div class="g-recaptcha mt-4" data-sitekey="{{ recaptcha_site_key }}">
+        </div>
+
         <button type="submit"
                 class="w-full mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
             Créer mon compte
@@ -36,4 +41,9 @@
         {{ form_end(registerForm) }}
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 {% endblock %}

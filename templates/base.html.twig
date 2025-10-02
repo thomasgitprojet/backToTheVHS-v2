@@ -221,24 +221,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-    // Mapping labels Symfony vers types utilisés par showFlash
-    const labelMapping = {
-        success: 'success',
-        danger: 'danger',
-        warning: 'warning',
-        info: 'info' // tu peux ajouter d'autres labels si besoin
-    };
+            // Mapping labels Symfony vers types utilisés par showFlash
+            const labelMapping = {
+                success: 'success',
+                danger: 'danger',
+                warning: 'warning',
+                info: 'info' // tu peux ajouter d'autres labels si besoin
+            };
 
-    // Récupère les flashes depuis le data-attribute
-    const flashes = JSON.parse(document.body.dataset.flashes || '{}');
- 
-    for (const label in flashes) {
-        const type = labelMapping[label] || 'success'; // fallback
-        flashes[label].forEach(message => {
-            showFlash(message, type);
+            // Récupère les flashes depuis le data-attribute
+            const flashes = JSON.parse(document.body.dataset.flashes || '{}');
+        
+            for (const label in flashes) {
+                const type = labelMapping[label] || 'success'; // fallback
+                flashes[label].forEach(message => {
+                    showFlash(message, type);
+                });
+            }
         });
-    }
-});
     </script>
+
 </body>
 </html>
