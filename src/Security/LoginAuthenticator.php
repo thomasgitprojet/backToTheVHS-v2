@@ -2,67 +2,58 @@
 
 namespace App\Security;
 
+namespace App\Security;
+
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class LoginAuthenticator extends AbstractAuthenticator
+class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
-    private UrlGeneratorInterface $urlGenerator;
+    use TargetPathTrait;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
-    {
-        $this->urlGenerator = $urlGenerator;
-    }
-
-    public function supports(Request $request): ?bool
-    {
-        // On supporte uniquement le formulaire de login sur la route 'app_login'
-        return $request->attributes->get('_route') === 'app_login'
-            && $request->isMethod('POST');
-    }
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
 
     public function authenticate(Request $request): Passport
     {
-        $username = $request->request->get('username', '');
+        $email = $request->request->get('email', '');
         $password = $request->request->get('password', '');
 
         return new Passport(
-            new UserBadge($username, function (string $userIdentifier) use ($password) {
-                // Ici, tu dois récupérer l’utilisateur depuis la base de données
-                // et vérifier le mot de passe. Exemple :
-                // return $userRepository->findOneByUsername($userIdentifier);
-            }),
-            // Si tu veux valider le mot de passe, ajoute un Credential ici
-            // Exemple: new PasswordCredentials($password)
-            [],
+            new UserBadge($email),
+            new PasswordCredentials($password),
             [
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
                 new RememberMeBadge(),
             ]
         );
     }
 
-    public function onAuthenticationSuccess(Request $request, $token, string $firewallName): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // Redirige l’utilisateur vers la page d’accueil après login
-        $targetUrl = $this->urlGenerator->generate('home');
-        return new RedirectResponse($targetUrl);
+        // ✅ Message flash
+        $request->getSession()->getFlashBag()->add('success', 'Connexion réussie ! Bienvenue 👋');
+
+        // 🔁 Redirige vers la page d’accueil
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('home'));
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
+    protected function getLoginUrl(Request $request): string
     {
-        // Redirige vers la page de login avec une erreur
-        $request->getSession()->set('login_error', $exception->getMessage());
-        $targetUrl = $this->urlGenerator->generate('app_login');
-        return new RedirectResponse($targetUrl);
+        // ✅ Route correcte dans ton app
+        return $this->urlGenerator->generate('app_connection');
     }
 }
