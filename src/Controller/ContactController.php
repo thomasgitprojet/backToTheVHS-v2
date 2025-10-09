@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
 use GuzzleHttp\Client;
@@ -21,9 +21,17 @@ final class ContactController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // Anti-spam : max 1 message par minute
+            $session = $request->getSession();
+            $lastMessageTime = $session->get('last_message_time');
+
+            if ($lastMessageTime && (time() - $lastMessageTime < 60)) {
+                $this->addFlash('error', 'Veuillez patienter une minute avant de renvoyer un message.');
+                return $this->redirectToRoute('app_contact');
+            }
+
             // Vérifier le reCAPTCHA
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
-
             $client = new Client();
             $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
                 'form_params' => [
@@ -45,14 +53,21 @@ final class ContactController extends AbstractController
 
             // Construction de l'email
             $email = (new Email())
-                ->from($data['email'])
-                ->to('ton.email@gmail.com') // 👉 remplace par ton adresse
+                ->from('ea8d0ca08d8bb7@sandbox.mailtrap.io') // ton adresse "from"
+                ->replyTo($data['email'])         // replyTo = email de l'utilisateur
+                ->to('thomasdesse.pro@gmail.com')       // ton adresse pour recevoir le message
                 ->subject('[BackToTheVHS] ' . $data['subject'])
-                ->text(
-                    "Nom : {$data['name']}\nEmail : {$data['email']}\n\nMessage :\n{$data['message']}"
-                );
+                ->html("
+                    <p><strong>Nom :</strong> {$data['name']}</p>
+                    <p><strong>Email :</strong> {$data['email']}</p>
+                    <p><strong>Sujet :</strong> {$data['subject']}</p>
+                    <p><strong>Message :</strong><br>{$data['message']}</p>
+                ");
 
             $mailer->send($email);
+
+            // Enregistrement du dernier envoi
+            $session->set('last_message_time', time());
 
             $this->addFlash('success', 'Votre message a bien été envoyé 📬');
             return $this->redirectToRoute('app_contact');

@@ -1,10 +1,6 @@
 {# templates/contact/contact.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ContactController!{% endblock %}
-
-{% extends 'base.html.twig' %}
-
 {% block title %}Contact - BackToTheVHS{% endblock %}
 
 {% block content %}
@@ -32,10 +28,10 @@
 
         {{ form_start(contactForm) }}
             <div class="space-y-6">
-                {{ form_row(contactForm.name, {'attr': {'class': 'w-full border border-gray-300 rounded-md p-3'}}) }}
-                {{ form_row(contactForm.email, {'attr': {'class': 'w-full border border-gray-300 rounded-md p-3'}}) }}
-                {{ form_row(contactForm.subject, {'attr': {'class': 'w-full border border-gray-300 rounded-md p-3'}}) }}
-                {{ form_row(contactForm.message, {'attr': {'class': 'w-full border border-gray-300 rounded-md p-3 resize-none'}}) }}
+                {{ form_row(contactForm.name, {'label_attr': {'class': 'text-black font-semibold'},'attr': {'class': 'text-black w-full border border-gray-300 rounded-md p-3'}}) }}
+                {{ form_row(contactForm.email, {'label_attr': {'class': 'text-black font-semibold'},'attr': {'class': 'text-black w-full border border-gray-300 rounded-md p-3'}}) }}
+                {{ form_row(contactForm.subject, {'label_attr': {'class': 'text-black font-semibold'},'attr': {'class': 'text-black w-full border border-gray-300 rounded-md p-3'}}) }}
+                {{ form_row(contactForm.message, {'label_attr': {'class': 'text-black font-semibold'},'attr': {'class': 'text-black w-full border border-gray-300 rounded-md p-3 resize-none'}}) }}
             </div>
 
             {# ✅ reCAPTCHA v2 #}

@@ -104,13 +104,39 @@
     </nav>
 
     <!-- Navigation desktop -->
-    <nav class="bg-gray-800 text-white py-3 px-6 shadow-md hidden md:block">
-        <ul class="flex justify-center gap-6 text-lg font-medium md:text-2xl">
-            <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
-            <li><a href="{{ path('app_products') }}" class="hover:text-yellow-400 transition">Catalogue</a></li>
-            <li><a href="{{ path('app_contact') }}" class="hover:text-yellow-400 transition">Contact</a></li>
+   <nav class="bg-gray-800/80 backdrop-blur-md text-white py-3 px-6 shadow-md hidden md:block">
+        <ul class="flex justify-center gap-6 text-lg font-medium md:text-2xl text-white drop-shadow-md">
+            <!-- Accueil -->
+            <li>
+                <a href="{{ path('home') }}" 
+                class="relative group transition duration-300 ease-in-out
+                        {% if app.request.get('_route') == 'home' %}text-yellow-400 font-bold{% endif %}">
+                    Accueil
+                    <span class="absolute left-0 -bottom-1 w-0 h-1 bg-yellow-400 transition-all group-hover:w-full"></span>
+                </a>
+            </li>
+
+            <!-- Catalogue -->
+            <li>
+                <a href="{{ path('app_products') }}" 
+                class="relative group transition duration-300 ease-in-out
+                        {% if app.request.get('_route') == 'app_products' %}text-yellow-400 font-bold{% endif %}">
+                    Catalogue
+                    <span class="absolute left-0 -bottom-1 w-0 h-1 bg-yellow-400 transition-all group-hover:w-full"></span>
+                </a>
+            </li>
+
+            <!-- Contact -->
+            <li>
+                <a href="{{ path('app_contact') }}" 
+                class="relative group transition duration-300 ease-in-out
+                        {% if app.request.get('_route') == 'app_contact' %}text-yellow-400 font-bold{% endif %}">
+                    Contact
+                    <span class="absolute left-0 -bottom-1 w-0 h-1 bg-yellow-400 transition-all group-hover:w-full"></span>
+                </a>
+            </li>
         </ul>
-    </nav>
+    </nav> 
 
     <!-- Contenu principal -->
     <main>
@@ -118,8 +144,50 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black text-center text-sm text-gray-500 py-4">
+    <!-- <footer class="bg-black text-center text-sm text-gray-500 py-4">
         &copy; {{ "now"|date("Y") }} Back To The VHS - Tous droits réservés
+    </footer> -->
+
+    <footer class="bg-gray-900 text-gray-400 py-10">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Infos & contact -->
+            <div class="space-y-2">
+                <h3 class="text-white font-bold text-lg">Back To The VHS</h3>
+                <p>thomasdesse.pro@gmail.com</p>
+                <p>+33 6 89 54 71 10</p>
+                <p><a href="" class="hover:text-yellow-400 transition">Mentions légales</a></p>
+                <p><a href="" class="hover:text-yellow-400 transition">Politique de confidentialité</a></p>
+            </div>
+
+            <!-- Navigation rapide -->
+            <div class="space-y-2">
+                <h3 class="text-white font-bold text-lg">Navigation</h3>
+                <ul class="space-y-1">
+                    <li><a href="{{ path('home') }}" class="hover:text-yellow-400 transition">Accueil</a></li>
+                    <li><a href="{{ path('app_products') }}" class="hover:text-yellow-400 transition">Catalogue</a></li>
+                    <li><a href="{{ path('app_contact') }}" class="hover:text-yellow-400 transition">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Réseaux sociaux / slogan -->
+            <div class="space-y-4">
+                <h3 class="text-white font-bold text-lg">Suivez-nous</h3>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i>f</a>
+                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-twitter"></i>t</a>
+                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-instagram"></i>i</a>
+                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-youtube"></i>y</a>
+                </div>
+                <p class="text-sm">Revivez l’âge d’or du cinéma en vhs 🎬</p>
+            </div>
+
+        </div>
+
+        <!-- Copyright -->
+        <div class="mt-8 border-t border-gray-700 pt-4 text-center text-sm text-gray-500">
+            &copy; {{ "now"|date("Y") }} Back To The VHS - Tous droits réservés
+        </div>
     </footer>
 
     {% block javascripts %}
