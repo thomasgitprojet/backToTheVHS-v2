@@ -80,4 +80,13 @@ final class MyCartController extends AbstractController
             'type' => $type
         ]);
     }
+
+    #[Route('/cart/checkout', name: 'app_cart_checkout')]
+    public function checkout(SessionInterface $session): Response
+    {
+        // On vide le panier après la commande fictive
+        $session->remove('cart');
+
+        return $this->render('my_cart/thank_you.html.twig');
+    }
 }

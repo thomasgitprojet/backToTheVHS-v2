@@ -14,16 +14,24 @@
 
     <!-- Header -->
     <header class="bg-black text-yellow-400 py-6 px-4 text-center shadow-lg">
-        <div class="text-center md:flex flex-col md:items-start md:pt-12">
-            <a href="{{ path('home') }}" 
-            class="inline-block transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-lg hover:animate-bounce-vhs">
-                <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS"
-                    class="w-64 mx-auto md:w-96 md:mx-0 filter hover:contrast-125 hover:brightness-110 hover:saturate-150">
-            </a>
-            <p class="text-sm text-yellow-400 mt-2 mb-4 md:text-lg md:pl-12">
-                La vintage n’a jamais été aussi stylé
-            </p>
+        <div class="flex flex-col items-center text-center md:flex-row md:items-center md:justify-start md:pt-12 md:pl-12">
+            <!-- Logo + tagline -->
+            <div class="flex flex-col items-center md:items-start">
+                <a href="{{ path('home') }}" 
+                class="inline-block transform transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-lg hover:animate-bounce-vhs">
+                    <img src="{{ asset('build/images/bToVHS.png') }}" alt="Back To The VHS"
+                        class="w-64 mx-auto md:w-96 md:mx-0 filter hover:contrast-125 hover:brightness-110 hover:saturate-150">
+                </a>
+                <p class="flex justify-center text-yellow-400 mt-2 mb-4 md:pl-20">
+                    La vintage n’a jamais été aussi stylé
+                </p>
+            </div>
+
+            <!-- Animation Popcorn -->
+            <div id="popcorn-animation" class="w-28 h-28 md:w-40 md:h-40 md:ml-4"></div>
         </div>
+
+        <!-- Navigation -->
         <div>
             <ul class="flex justify-center gap-4 md:justify-end items-center">
                 {% if is_granted('ROLE_ADMIN') %}
@@ -155,7 +163,7 @@
             <div class="space-y-2">
                 <h3 class="text-white font-bold text-lg">Back To The VHS</h3>
                 <p>thomasdesse.pro@gmail.com</p>
-                <p>+33 6 89 54 71 10</p>
+                <p>06 89 54 71 10</p>
                 <p><a href="" class="hover:text-yellow-400 transition">Mentions légales</a></p>
                 <p><a href="" class="hover:text-yellow-400 transition">Politique de confidentialité</a></p>
             </div>
@@ -174,10 +182,10 @@
             <div class="space-y-4">
                 <h3 class="text-white font-bold text-lg">Suivez-nous</h3>
                 <div class="flex gap-4">
-                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i>f</a>
-                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-twitter"></i>t</a>
-                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-instagram"></i>i</a>
-                    <a href="#" class="hover:text-yellow-400 transition"><i class="fab fa-youtube"></i>y</a>
+                    <a href="https://facebook.com" class="hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i><img src="{{ asset('build/images/icons8-facebook-nouveau-32.png') }}" alt="icon facebook"></a>
+                    <a href="https://twitter.com" class="hover:text-yellow-400 transition"><i class="fab fa-twitter"></i><img src="{{ asset('build/images/icons8-twitter-32.png') }}" alt="icon twitter"></a>
+                    <a href="https://instagram.com" class="hover:text-yellow-400 transition"><i class="fab fa-instagram"></i><img src="{{ asset('build/images/icons8-instagram-32.png') }}" alt="icon instagram"></a>
+                    <a href="https://youtube.com" class="hover:text-yellow-400 transition"><i class="fab fa-youtube"></i><img src="{{ asset('build/images/icons8-youtube-32.png') }}" alt="icon youtube"></a>
                 </div>
                 <p class="text-sm">Revivez l’âge d’or du cinéma en vhs 🎬</p>
             </div>
@@ -309,5 +317,22 @@
         });
     </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('popcorn-animation');
+
+        if (container) {
+            lottie.loadAnimation({
+                container: container,
+                renderer: 'svg',
+                loop: true,          // ✅ Boucle infinie
+                autoplay: true,      // ✅ Démarre automatiquement
+                path: '{{ asset("animations/Popcorn.json") }}'
+            });
+        }
+    });
+</script>
+
 </body>
-</html>
+</html>path: '{{ asset("animations/Popcorn.json") }}'
