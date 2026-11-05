@@ -53,7 +53,7 @@ final class ContactController extends AbstractController
 
             // Construction de l'email
             $email = (new Email())
-                ->from('ea8d0ca08d8bb7@sandbox.mailtrap.io') // ton adresse "from"
+                ->from('contact@backtothevhs.com') // ton adresse "from"
                 ->replyTo($data['email'])         // replyTo = email de l'utilisateur
                 ->to('thomasdesse.pro@gmail.com')       // ton adresse pour recevoir le message
                 ->subject('[BackToTheVHS] ' . $data['subject'])

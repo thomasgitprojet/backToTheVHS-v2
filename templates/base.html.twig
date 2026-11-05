@@ -148,8 +148,8 @@
     </nav> 
 
     <!-- Contenu principal -->
-    <main>
-        {% block content %}{% endblock %}
+    <main class="w-full">
+        {% block content %}{% endblock %}   
     </main>
 
     <!-- Footer -->
@@ -206,12 +206,34 @@
 
     {# Script ajout au panier et compteur dynamique #}
     <script>
+        const loginUrl = `/connexion?redirect=${encodeURIComponent(window.location.href)}`;
+
         function addToCart(productId) {
             fetch(`/cart/add/${productId}`, {
                 method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json' 
+                }
             })
-            .then(response => response.json())
+            // .then(response => response.json())
+            .then(async response => {
+                if (response.status === 401) {
+                    // Utilisateur non connecté → redirection vers la page de login
+                   showFlash("Veuillez vous connecter pour ajouter un produit à votre panier.", 'warning');
+
+                    // Redirection après un petit délai (ex: 1,5s)
+                    setTimeout(() => {
+                        window.location.href = loginUrl;
+                    }, 1500);
+
+                    // Stoppe l'exécution normale
+                    return Promise.reject("Not logged in");
+                }
+
+                // On récupère le JSON (si tout va bien)
+                return response.json();
+            })
             .then(data => {
                 // Met à jour le compteur du panier
                 let counter = document.getElementById('cart-count');
@@ -241,15 +263,15 @@
                         ]
                     });
                 } else if (data.type === 'warning') {
-                    // Produit déjà présent
                     showFlash(data.message, 'warning'); // disparaît automatiquement
                 } else {
-                    // Cas danger ou autre
-                    showFlash(data.message, data.type);
+                    showFlash(data.message, data.type || 'danger');
                 }
             })
-            .catch(() => {
-                showFlash("Impossible d'ajouter le produit pour le moment.", 'danger');
+            .catch(error => {
+                if (error !== "Not logged in") {
+                    showFlash("Impossible d'ajouter le produit pour le moment.", 'danger');
+                }
             });
         }
     </script>
@@ -336,4 +358,4 @@
 </script>
 
 </body>
-</html>path: '{{ asset("animations/Popcorn.json") }}'
+</html>

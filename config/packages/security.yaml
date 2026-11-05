@@ -17,20 +17,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-
-            # On utilise ton LoginAuthenticator pour les logins
             custom_authenticator: App\Security\LoginAuthenticator
-
             logout:
                 path: app_logout
                 target: app_connection
-                # méthode POST est requise par défaut, tu peux ajouter csrf_token if needed
-
-            # Optionnel : activer "remember me" si nécessaire
-            # remember_me:
-            #     secret: '%kernel.secret%'
-            #     lifetime: 604800 # 7 jours
-            #     path: /
             
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }

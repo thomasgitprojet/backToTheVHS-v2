@@ -27,6 +27,7 @@
                     placeholder="Votre mot de passe">
             </div>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <input type="hidden" name="redirect" value="{{ app.request.query.get('redirect') }}">
             <button type="submit"
                 class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition duration-200">
                 Connexion
