@@ -4,10 +4,10 @@
 {% block title %}Contact - BackToTheVHS{% endblock %}
 
 {% block content %}
-<div class="bg-contain bg-repeat-round md:flex flex-col items-center md:pt-12 md:gap-6"
+<div class="w-full bg-contain bg-repeat-round flex flex-col items-center gap-6  md:py-12"
      style="background-image: url(&quot;{{ asset('build/images/background.png') }}&quot;)">
 
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <div class="w-full max-w-3xl bg-white p-4 sm:p-8 rounded-lg shadow-lg">
         <h1 class="text-4xl font-bold mb-6 text-gray-800">Contactez-nous</h1>
 
         {% for message in app.flashes('success') %}

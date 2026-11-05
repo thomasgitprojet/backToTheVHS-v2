@@ -227,18 +227,134 @@ fontSize: {
     +--------------------------+
 
     
-<!-- #[Route('/product/delete/{id}', name: 'app_delete_product', methods: ['POST'])]
-public function delete(Request $request, Product $product, EntityManagerInterface $em, ImageManager $imageManager): Response
+<!-- <?php
+
+namespace App\Security;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+
+class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
-    if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-        // Supprimer l'image associée
-        if ($product->getImage()) {
-            $imageManager->deleteImage($product->getImage());
+    use TargetPathTrait;
+
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+
+    public function authenticate(Request $request): Passport
+        {
+            $email = $request->request->get('email', '');
+            $password = $request->request->get('password', '');
+
+            return new Passport(
+                new UserBadge($email),
+                new PasswordCredentials($password),
+                [
+                    new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                    new RememberMeBadge(),
+                ]
+            );
         }
 
-        $em->remove($product);
-        $em->flush();
-    }
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
+        {
+            // ✅ Message flash
+            $request->getSession()->getFlashBag()->add('success', 'Connexion réussie ! Bienvenue 👋');
 
-    return $this->redirectToRoute('account_page');
+            // 🔁 Redirige vers la page d’accueil
+            if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+                return new RedirectResponse($targetPath);
+            }
+
+            return new RedirectResponse($this->urlGenerator->generate('home'));
+        }
+
+    protected function getLoginUrl(Request $request): string
+        {
+            // ✅ Route correcte dans ton app
+            return $this->urlGenerator->generate('app_connection');
+        }
+
+    public function start(Request $request, AuthenticationException $authException = null): Response
+        {
+            // Si c’est une requête AJAX, renvoie 401 JSON
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['message' => 'not_logged'], 401);
+            }
+
+            // Sinon, redirige normalement vers la page de login
+            return new RedirectResponse($this->urlGenerator->generate('app_connection'));
+        }
 } -->
+
+::::::::::::::::::::::::::::::::::
+
+function addToCart(productId) {
+            fetch(`/cart/add/${productId}`, {
+                method: 'POST',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json' 
+                }
+            })
+            .then(async response => {
+                if (response.status === 401) {
+                    // Utilisateur non connecté → redirection vers la page de login
+                    window.location.href = loginUrl;
+                    throw new Error("Not logged in");
+                }
+
+                // On récupère le JSON (si tout va bien)
+                return response.json();
+            })
+            .then(data => {
+                // Met à jour le compteur du panier
+                let counter = document.getElementById('cart-count');
+                if (!counter) {
+                    counter = document.createElement('span');
+                    counter.id = 'cart-count';
+                    counter.className = 'absolute -top-2 -right-3 bg-yellow-400 text-black rounded-full w-5 h-5 text-xs flex items-center justify-center';
+                    document.querySelector('a[href$="/my/cart"]').appendChild(counter);
+                }
+                counter.textContent = data.count;
+
+                // Affiche le flash
+                if (data.type === 'success') {
+                    showFlash(data.message, 'success', {
+                        persistent: true,
+                        actions: [
+                            {
+                                label: "Continuer mes achats",
+                                onClick: "this.closest('.flash-message').remove()",
+                                class: "bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md"
+                            },
+                            {
+                                label: "Voir mon panier",
+                                onClick: "window.location.href='/my/cart'",
+                                class: "bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-md"
+                            }
+                        ]
+                    });
+                } else if (data.type === 'warning') {
+                    showFlash(data.message, 'warning'); // disparaît automatiquement
+                } else {
+                    showFlash(data.message, data.type || 'danger');
+                }
+            })
+            .catch(error => {
+                // En cas d'erreur réseau ou autre
+                console.error(error);
+                showFlash("Impossible d'ajouter le produit pour le moment.", 'danger');
+            });
+        }

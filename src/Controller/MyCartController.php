@@ -8,10 +8,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class MyCartController extends AbstractController
 {
     #[Route('/my/cart', name: 'app_my_cart')]
+    #[IsGranted('ROLE_USER')]
     public function index(SessionInterface $session, PublicationRepository $publicationRepository): Response
     {
         $cartIds = $session->get('cart', []);
@@ -24,8 +26,15 @@ final class MyCartController extends AbstractController
 
     #[Route('/cart/add/{id}', name: 'app_cart_add', methods: ['POST'])]
     public function add(int $id, PublicationRepository $publicationRepository, SessionInterface $session): JsonResponse
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        {
+            // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+            if (!$this->getUser()) {
+            return $this->json([
+                'message' => 'Veuillez vous connecter pour ajouter un produit à votre panier.',
+                'type' => 'warning'
+            ], 401);
+        }
 
         $publication = $publicationRepository->find($id);
         if (!$publication) {

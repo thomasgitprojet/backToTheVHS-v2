@@ -2,6 +2,9 @@ twig:
     file_name_pattern: '*.twig'
     globals:
         recaptcha_site_key: '%recaptcha_site_key%'
+    debug: false
+    strict_variables: false
+    auto_reload: true   # force Twig à recompiler même en prod
 
 when@test:
     twig:
