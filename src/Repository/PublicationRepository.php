@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Publication;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use SortDirection;
 
 /**
  * @extends ServiceEntityRepository<Publication>
@@ -32,19 +33,19 @@ class PublicationRepository extends ServiceEntityRepository
         // Tri
         switch ($sort) {
             case 'price_asc':
-                $qb->orderBy('prod.priceProduct', 'ASC');
+                $qb->orderBy('prod.priceProduct', SortDirection::Ascending);
                 break;
             case 'price_desc':
-                $qb->orderBy('prod.priceProduct', 'DESC');
+                $qb->orderBy('prod.priceProduct', SortDirection::Descending);
                 break;
             case 'title_asc':
-                $qb->orderBy('m.title', 'ASC');
+                $qb->orderBy('m.title', SortDirection::Ascending);
                 break;
             case 'title_desc':
-                $qb->orderBy('m.title', 'DESC');
+                $qb->orderBy('m.title', SortDirection::Descending);
                 break;
             default:
-                $qb->orderBy('p.datePublication', 'DESC');
+                $qb->orderBy('p.datePublication', SortDirection::Descending);
         }
 
         return $qb; // retourne le QueryBuilder, pas getQuery()
