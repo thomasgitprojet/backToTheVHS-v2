@@ -47,7 +47,7 @@
 
                 <li>
                     {% if app.user %}
-                    <form action="{{ path('app_logout') }}" method="POST">
+                    <form action="{{ logout_path() }}" method="POST">
                         <button type="submit" 
                                 class="flex items-center gap-2 relative group hover:text-yellow-400 transition">
                             Déconnexion

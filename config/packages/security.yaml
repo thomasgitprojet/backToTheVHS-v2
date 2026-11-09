@@ -19,7 +19,7 @@ security:
             provider: app_user_provider
             custom_authenticator: App\Security\LoginAuthenticator
             logout:
-                path: app_logout
+                path: /logout
                 target: app_connection
             
     access_control:
