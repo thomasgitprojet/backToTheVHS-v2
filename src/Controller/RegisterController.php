@@ -33,6 +33,11 @@ final class RegisterController extends AbstractController
              // Vérifier reCAPTCHA
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
 
+            if (empty($recaptchaResponse)) {
+                $this->addFlash('error', 'Veuillez confirmer que vous n\'êtes pas un robot.');
+                return $this->redirectToRoute('app_register');
+            }
+
             $client = new Client();
             $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
                 'form_params' => [
@@ -44,12 +49,7 @@ final class RegisterController extends AbstractController
 
             $result = json_decode($response->getBody(), true);
 
-            if (!$result['success']) {
-                $this->addFlash('error', 'Veuillez confirmer que vous n\'êtes pas un robot.');
-                return $this->redirectToRoute('app_register');
-            }
-
-            if (empty($recaptchaResponse) || !$result['success']) {
+            if (!($result['success'] ?? false)) {
                 $this->addFlash('error', 'Veuillez confirmer que vous n\'êtes pas un robot.');
                 return $this->redirectToRoute('app_register');
             }
