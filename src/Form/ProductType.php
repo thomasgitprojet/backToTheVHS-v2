@@ -58,8 +58,7 @@ class ProductType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Product::class, // ou Produit::class
-            'autocomplete_url' => null,
+            'data_class' => Product::class,
         ]);
     }
 }

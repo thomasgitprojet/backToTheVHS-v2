@@ -23,9 +23,7 @@ final class ProductManageController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $product = new Product();
-        $form = $this->createForm(ProductType::class, $product, [
-            'autocomplete_url' => $this->generateUrl('movies_autocomplete'),
-        ]);
+        $form = $this->createForm(ProductType::class, $product);
 
         $form->handleRequest($request);
 
@@ -143,9 +141,7 @@ final class ProductManageController extends AbstractController
         }
 
         // Pré-remplir les champs unmapped
-       $form = $this->createForm(ProductType::class, $product, [
-            'autocomplete_url' => $this->generateUrl('movies_autocomplete'),
-        ]);
+       $form = $this->createForm(ProductType::class, $product);
 
         // Préremplir les champs unmapped après la création du formulaire
         $form->get('movieTitle')->setData($product->getMovie()?->getTitle());
