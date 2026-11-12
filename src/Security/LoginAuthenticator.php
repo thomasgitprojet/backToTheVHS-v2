@@ -78,24 +78,15 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             ], 401);
         }
 
-        // Méthode 2 : header custom au cas où Docker supprime X-Requested-With
-        if ($request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
-            return new JsonResponse([
-                'message' => 'Non connecté (XHR direct)',
-            ], 401);
-        }
-
-        // Méthode 3 : detection JSON
-        if (str_contains($request->headers->get('Accept'), 'application/json')) {
+        // Méthode 2 : detection JSON
+        if (str_contains($request->headers->get('Accept', ''), 'application/json')) {
             return new JsonResponse([
                 'message' => 'Non connecté (JSON)',
             ], 401);
         }
 
         // Sinon redirection classique
-        return new RedirectResponse(
-            $this->urlGenerator->generate('app_connection')
-        );
+        return new RedirectResponse($this->getLoginUrl($request));
     }
 
     /**
