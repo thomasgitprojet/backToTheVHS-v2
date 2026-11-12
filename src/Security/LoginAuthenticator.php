@@ -53,7 +53,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
         // Vérifie si un paramètre redirect est présent dans l'URL
         $redirect = $request->request->get('redirect', $request->query->get('redirect'));
-        if ($redirect) {
+        if (is_string($redirect) && $this->isSafeRedirect($redirect)) {
             return new RedirectResponse($redirect);
         }
 
@@ -96,5 +96,15 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse(
             $this->urlGenerator->generate('app_connection')
         );
+    }
+
+    /**
+     * N'autorise que les chemins internes au site (ex. "/publication/6").
+     */
+    private function isSafeRedirect(string $url): bool
+    {
+        return str_starts_with($url, '/')
+            && !str_starts_with($url, '//')
+            && !str_starts_with($url, '/\\');
     }
 }

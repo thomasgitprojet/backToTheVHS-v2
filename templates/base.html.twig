@@ -206,7 +206,7 @@
 
     {# Script ajout au panier et compteur dynamique #}
     <script>
-        const loginUrl = `{{ path('app_connection') }}?redirect=${encodeURIComponent(window.location.href)}`;
+        const loginUrl = `{{ path('app_connection') }}?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
 
         function addToCart(productId) {
             fetch(`/cart/add/${productId}`, {
