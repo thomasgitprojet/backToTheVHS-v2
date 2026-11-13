@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Security\Voter\ProductVoter;
 
 final class ProductManageController extends AbstractController
 {
@@ -104,10 +105,8 @@ final class ProductManageController extends AbstractController
             throw $this->createAccessDeniedException('Jeton CSRF invalide.');
         }
 
-        // Vérifier que l'utilisateur est propriétaire du produit AVANT toute suppression
-        if ($product->getPublication()?->getAccount() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce produit.');
-        }
+        // Seul le propriétaire peut supprimer le produit (voir ProductVoter)
+        $this->denyAccessUnlessGranted(ProductVoter::DELETE, $product, 'Vous ne pouvez pas supprimer ce produit.');
 
         // Supprimer l’image si elle existe
         if ($product->getImage()) {
@@ -135,10 +134,8 @@ final class ProductManageController extends AbstractController
         SluggerInterface $slugger,
         ImageManager $imageManager
     ): Response {
-        // Vérification : l'utilisateur est-il bien le propriétaire ?
-        if ($product->getPublication()?->getAccount() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ce produit.');
-        }
+        // Seul le propriétaire peut modifier le produit (voir ProductVoter)
+        $this->denyAccessUnlessGranted(ProductVoter::EDIT, $product, 'Vous ne pouvez pas modifier ce produit.');
 
         // Pré-remplir les champs unmapped
        $form = $this->createForm(ProductType::class, $product);
