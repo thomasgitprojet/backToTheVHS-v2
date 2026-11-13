@@ -21,71 +21,71 @@ use App\Security\Voter\ProductVoter;
 final class ProductManageController extends AbstractController
 {
     #[Route('/new/product', name: 'app_new_product')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
-    {
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger,
+        ImageManager $imageManager
+    ): Response {
         $product = new Product();
-        $form = $this->createForm(ProductType::class, $product);
-
+        $form = $this->createForm(ProductType::class, $product, [
+            'image_required' => true,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer le titre du film (champ unmapped)
-            $movieTitle = $form->get('movieTitle')->getData();
-
-            // Générer et setter le slug à partir du titre
-            $slug = $slugger->slug($movieTitle)->lower();
-            $product->setSlug($slug);
-
-            // Gestion de l'image
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('uploads_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('danger', 'Erreur lors de l’upload de l’image.');
-                }
-
-                $product->setImage($newFilename);
-            }
-
-            // Validation stricte de movieId
+            // 1. Vérifier le film AVANT de toucher au disque
             $movieId = $form->get('movieId')->getData();
-            if (!$movieId) {
-                $this->addFlash('danger', 'Veuillez sélectionner un film dans la liste proposée.');
-                return $this->render('new_product/new_product.html.twig', [
-                    'form' => $form->createView(),
-                ]);
-            }
+            $movie = $movieId ? $entityManager->getRepository(Movies::class)->find($movieId) : null;
 
-            $movie = $entityManager->getRepository(Movies::class)->find($movieId);
             if (!$movie) {
-                $this->addFlash('danger', 'Film sélectionné invalide.');
+                $this->addFlash('danger', 'Veuillez sélectionner un film dans la liste proposée.');
+
                 return $this->render('new_product/new_product.html.twig', [
                     'form' => $form->createView(),
                 ]);
             }
 
             $product->setMovie($movie);
+            $product->setSlug($slugger->slug($form->get('movieTitle')->getData())->lower());
 
-            $entityManager->persist($product);
-            $entityManager->flush();
+            // 2. Enregistrer l'image sur le disque (si une image a été envoyée)
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                try {
+                    $product->setImage($imageManager->uploadImage($imageFile));
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Erreur lors de l'upload de l'image.");
 
-            // Création de la publication liée
+                    return $this->render('new_product/new_product.html.twig', [
+                        'form' => $form->createView(),
+                    ]);
+                }
+            }
+
+            // 3. Préparer la publication liée
             $publication = new Publication();
             $publication->setProduct($product);
-            $publication->setAccount($this->getUser()); 
+            $publication->setAccount($this->getUser());
             $publication->setDatePublication(new \DateTime());
 
-            $entityManager->persist($publication);
-            $entityManager->flush();
+            // 4. Tout enregistrer en base en une seule fois
+            try {
+                $entityManager->persist($product);
+                $entityManager->persist($publication);
+                $entityManager->flush();
+            } catch (\Throwable $e) {
+                // La base n'a rien enregistré : on supprime l'image devenue orpheline
+                if ($product->getImage()) {
+                    $imageManager->deleteImage($product->getImage());
+                }
+
+                throw $e;
+            }
 
             $this->addFlash('success', 'Annonce publiée !');
-            return $this->redirectToRoute('app_account'); // ou une autre route
+
+            return $this->redirectToRoute('app_account');
         }
 
         return $this->render('new_product/new_product.html.twig', [

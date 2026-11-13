@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class ProductType extends AbstractType
 {
@@ -43,14 +44,8 @@ class ProductType extends AbstractType
             ->add('imageFile', FileType::class, [
                 'label' => 'Image du produit',
                 'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => ['image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Seuls les formats JPEG et PNG sont autorisés.',
-                    ])
-                ],
+                'required' => $options['image_required'],
+                'constraints' => $this->imageConstraints($options['image_required']),
                 'attr' => ['accept' => 'image/*'],
             ]);
     }
@@ -59,6 +54,30 @@ class ProductType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Product::class,
+            'image_required' => false,
         ]);
+
+        $resolver->setAllowedTypes('image_required', 'bool');
+    }
+
+    /**
+     * Contraintes du champ image : format et taille toujours vérifiés,
+     * présence obligatoire seulement si demandé (à la création).
+     */
+    private function imageConstraints(bool $required): array
+    {
+        $constraints = [
+            new File([
+                'maxSize' => '2M',
+                'mimeTypes' => ['image/jpeg', 'image/png'],
+                'mimeTypesMessage' => 'Seuls les formats JPEG et PNG sont autorisés.',
+            ]),
+        ];
+
+        if ($required) {
+            $constraints[] = new NotNull(message: 'Veuillez ajouter une image du produit.');
+        }
+
+        return $constraints;
     }
 }
