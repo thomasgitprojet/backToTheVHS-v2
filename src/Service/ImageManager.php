@@ -2,23 +2,36 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageManager
 {
-    private string $uploadDir;
-    private Filesystem $filesystem;
-
-    public function __construct(ParameterBagInterface $params)
-    {
-        $this->uploadDir = $params->get('kernel.project_dir') . '/public/uploads/images/';
-        $this->filesystem = new Filesystem();
+    public function __construct(
+        #[Autowire('%uploads_directory%')]
+        private string $uploadDir,
+        private Filesystem $filesystem,
+    ) {
     }
 
+    /**
+     * Enregistre l'image dans le dossier d'upload et renvoie le nom du fichier créé.
+     */
+    public function uploadImage(UploadedFile $file): string
+    {
+        $filename = uniqid() . '.' . $file->guessExtension();
+        $file->move($this->uploadDir, $filename);
+
+        return $filename;
+    }
+
+    /**
+     * Supprime une image du dossier d'upload, si elle existe.
+     */
     public function deleteImage(string $filename): void
     {
-        $filePath = $this->uploadDir . $filename;
+        $filePath = $this->uploadDir . '/' . $filename;
 
         if ($this->filesystem->exists($filePath)) {
             $this->filesystem->remove($filePath);
