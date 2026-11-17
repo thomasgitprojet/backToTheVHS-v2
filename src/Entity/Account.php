@@ -40,6 +40,9 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
+    /**  
+     * @var list<string>
+    */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
@@ -171,6 +174,7 @@ class Account implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /** @param list<string> $roles */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;

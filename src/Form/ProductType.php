@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/** @extends AbstractType<Product> */
 class ProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -63,6 +64,8 @@ class ProductType extends AbstractType
     /**
      * Contraintes du champ image : format et taille toujours vérifiés,
      * présence obligatoire seulement si demandé (à la création).
+     * 
+     * @return list<\Symfony\Component\Validator\Constraint>
      */
     private function imageConstraints(bool $required): array
     {

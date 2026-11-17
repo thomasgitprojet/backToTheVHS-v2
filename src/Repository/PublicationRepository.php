@@ -6,6 +6,7 @@ use App\Entity\Publication;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use SortDirection;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @extends ServiceEntityRepository<Publication>
@@ -17,7 +18,7 @@ class PublicationRepository extends ServiceEntityRepository
         parent::__construct($registry, Publication::class);
     }
 
-    public function findFilteredPublications(?string $search = null, ?string $sort = null)
+    public function findFilteredPublications(?string $search = null, ?string $sort = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')
             ->join('p.product', 'prod')

@@ -16,6 +16,7 @@ class MoviesRepository extends ServiceEntityRepository
         parent::__construct($registry, Movies::class);
     }
 
+    /** @return list<Movies> */
     public function findByTitleLike(string $term): array
     {
     return $this->createQueryBuilder('m')
@@ -25,14 +26,4 @@ class MoviesRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult();
     }
-
-    //    public function findOneBySomeField($value): ?Movies
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
