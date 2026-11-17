@@ -173,25 +173,38 @@ final class ProductManageController extends AbstractController
 
             // Gestion image : remplacer si une nouvelle est uploadée
             $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                // Supprime l’ancienne
-                if ($product->getImage()) {
-                    $imageManager->deleteImage($product->getImage());
-                }
+            $oldImage = $product->getImage();
 
-                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+            // 1. Enregistrer la nouvelle image (l'ancienne reste en place pour l'instant)
+            if ($imageFile) {
                 try {
-                    $imageFile->move(
-                        $this->getParameter('uploads_directory'),
-                        $newFilename
-                    );
-                    $product->setImage($newFilename);
+                    $product->setImage($imageManager->uploadImage($imageFile));
                 } catch (FileException $e) {
-                    $this->addFlash('danger', 'Erreur lors de l’upload de la nouvelle image.');
+                    $this->addFlash('danger', "Erreur lors de l'upload de la nouvelle image.");
+
+                    return $this->render('new_product/new_product.html.twig', [
+                        'form' => $form->createView(),
+                        'editMode' => true,
+                    ]);
                 }
             }
 
-            $entityManager->flush();
+            // 2. Enregistrer les modifications en base
+            try {
+                $entityManager->flush();
+            } catch (\Throwable $e) {
+                // La base n'a rien enregistré : on supprime la nouvelle image, l'ancienne est conservée
+                if ($imageFile) {
+                    $imageManager->deleteImage($product->getImage());
+                }
+
+                throw $e;
+            }
+
+            // 3. Tout est enregistré : on peut supprimer l'ancienne image
+            if ($imageFile && $oldImage) {
+                $imageManager->deleteImage($oldImage);
+            }
             $this->addFlash('success', 'Produit modifié avec succès.');
 
             return $this->redirectToRoute('app_account');
