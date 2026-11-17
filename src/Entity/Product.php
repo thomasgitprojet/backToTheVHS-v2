@@ -35,9 +35,6 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Commande $commande = null;
 
-    /**
-     * @var Collection<int, Publication>
-     */
     #[ORM\OneToOne(mappedBy: 'product', targetEntity: Publication::class, cascade: ['persist', 'remove'])]
     private ?Publication $publication = null;
 

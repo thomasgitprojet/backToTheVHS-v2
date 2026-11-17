@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Security\Voter\ProductVoter;
+use App\Entity\Account;
 
 final class ProductManageController extends AbstractController
 {
@@ -66,7 +67,11 @@ final class ProductManageController extends AbstractController
             // 3. Préparer la publication liée
             $publication = new Publication();
             $publication->setProduct($product);
-            $publication->setAccount($this->getUser());
+            $user = $this->getUser();
+            if (!$user instanceof Account) {
+                throw $this->createAccessDeniedException('Vous devez être connecté pour publier une annonce.');
+            }
+            $publication->setAccount($user);
             $publication->setDatePublication(new \DateTime());
 
             // 4. Tout enregistrer en base en une seule fois

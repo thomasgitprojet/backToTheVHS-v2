@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -49,7 +50,10 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // Sinon, redirection classique
-        $request->getSession()->getFlashBag()->add('success', 'Connexion réussie ! Bienvenue 👋');
+        $session = $request->getSession();
+        if ($session instanceof FlashBagAwareSessionInterface) {
+            $session->getFlashBag()->add('success', 'Connexion réussie ! Bienvenue 👋');
+        }
 
         // Vérifie si un paramètre redirect est présent dans l'URL
         $redirect = $request->request->get('redirect', $request->query->get('redirect'));
