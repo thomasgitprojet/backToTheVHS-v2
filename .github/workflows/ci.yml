@@ -49,6 +49,12 @@ jobs:
         name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
       -
+        name: Composer audit (failles connues)
+        run: docker compose exec -T php composer audit
+      -
+        name: PHPStan
+        run: docker compose exec -T php vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+      -
         name: Check HTTPS reachability
         if: false # Remove this line when the homepage will be configured, or change the path to check
         run: curl -vk --fail-with-body https://localhost
