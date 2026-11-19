@@ -42,7 +42,7 @@ jobs:
         name: Start services
         run: docker compose up --wait --no-build
       -
-        name: Show database logs
+        name: Show logs
         if: failure()
         run: docker compose logs database
       -
