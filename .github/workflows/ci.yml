@@ -44,7 +44,7 @@ jobs:
       -
         name: Show logs
         if: failure()
-        run: docker compose logs database
+        run: docker compose logs php database
       -
         name: Check HTTP reachability
         run: curl -v --fail-with-body http://localhost
