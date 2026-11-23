@@ -12,3 +12,7 @@ services:
             - '../src/Kernel.php'
         autowire: true
         autoconfigure: true
+
+when@prod:
+    parameters:
+        uploads_directory: '%kernel.project_dir%/public_html/uploads/images'
