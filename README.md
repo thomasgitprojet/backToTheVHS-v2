@@ -175,6 +175,32 @@ docker compose exec php bin/console make:form
 docker compose exec php bin/console make:voter
 ```
 
+## Deployment (Hostinger shared hosting)
+
+The production site runs on a Hostinger shared hosting plan (PHP 8.3, MariaDB 11.8), deployed over SSH.
+
+**Server specifics**
+- The web root is `public_html/`. A symbolic link `public -> public_html` lets Symfony keep using `public/` (Webpack Encore, assets, uploads). Do not delete it.
+- The default PHP on the command line is 8.0: `~/.bash_profile` loads `~/.bashrc`, which puts PHP 8.3 first in the `PATH` (`/opt/alt/php83/usr/bin`).
+- Production settings live in `.env.local` on the server (never committed). For MariaDB, `DATABASE_URL` must use `serverVersion=mariadb-11.8.9`: with a MySQL version, Doctrine Migrations reports a false "metadata storage is not up to date" error.
+- `public_html/uploads/` holds the users' images: never overwrite or delete it during a deployment.
+
+
+**Deploying a new version**
+```bash
+# On the local machine
+docker compose exec php npm run build
+git archive --format=tar.gz -o deploy-code.tar.gz HEAD bin config migrations src templates translations composer.json composer.lock symfony.lock
+# Upload the archive to the site folder (next to public_html), then over SSH:
+tar -xzf deploy-code.tar.gz
+composer install --no-dev --optimize-autoloader --no-interaction   # the final "assets:install public [KO]" is harmless
+php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console cache:clear
+```
+Copy the new `public/build/` folder into `public_html/build/` (keep `public_html/uploads/`).
+Logs: `var/log/prod-YYYY-MM-DD.log` (errors only, kept 14 days).
+
+
 > ⚠️ `doctrine:fixtures:load` **empties the whole database** before loading test data.
 
 ## Author
